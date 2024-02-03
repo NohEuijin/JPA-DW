@@ -56,10 +56,9 @@
 - 세션에 따른 헤더 메뉴 등 매핑 다름
 - 세션의 레벨에 따라 000 님 , 000 상담사 님 , 000 관리자 님 으로 구분
 - 세션의 레벨에 따라 드롭다운 목록이 변경
-<a href=""> 
- <img src="?type=w580" width="500">
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/eaaf26ee-8288-4b51-9f14-46f4db4b8664"> 
+ <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/eaaf26ee-8288-4b51-9f14-46f4db4b8664?type=w580" width="500">
 </a>
-![0산책갈개 소개](https://github.com/NohEuijin/JPA-DW/assets/141835418/eaaf26ee-8288-4b51-9f14-46f4db4b8664)
 
 ## 🏷담당 작업
 
