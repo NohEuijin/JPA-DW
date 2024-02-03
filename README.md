@@ -42,7 +42,9 @@
 <details open>
 <summary>ERD</summary>
   
-  <a href='https://ifh.cc/v-CsWvC9' target='_blank'><img src='https://github.com/NohEuijin/JPA-DW/assets/141835418/c46f7e89-697f-4b4b-bda2-7ec5481f3248' border='0'></a>
+<a href='https://github.com/NohEuijin/JPA-DW/assets/141835418/c46f7e89-697f-4b4b-bda2-7ec5481f3248' target='_blank'>
+<img src='https://github.com/NohEuijin/JPA-DW/assets/141835418/c46f7e89-697f-4b4b-bda2-7ec5481f3248' border='0'>
+</a>
 
 </details>
 
@@ -84,7 +86,7 @@
 ### 🔖쇼핑(리스트)<a href=""> WIKI로 이동</a>
 - 비용을 기준으로 찾아와 보여줌.
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/8d500331-d885-499d-8693-80d5efd10f0f"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/8d500331-d885-499d-8693-80d5efd10f0f?type=w580" width="500">
 </a>
 
@@ -94,7 +96,7 @@
 - 예약 버튼 클릭 시 예약 페이지로 이동
 - 상담 후 댓글이 가능
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/9d2315e5-8a67-4d31-a7c1-b7f21dbdadf8"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/9d2315e5-8a67-4d31-a7c1-b7f21dbdadf8?type=w580" width="500">
 </a>
 
@@ -105,7 +107,7 @@
 - 상담을 예약한 회원의 정보를 번호와 이메일, 상담 내역을 모달창으로 확인 가능(비동기
 - 상담취소 또는 상담완료 버튼으로 관리 가능
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/009d9089-1679-492d-a493-0921e7cab25b"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/009d9089-1679-492d-a493-0921e7cab25b?type=w580" width="500">
 </a>
 
@@ -114,7 +116,7 @@
 - 결제 버튼을 누르면 카카오페이로 결제가 진행
 - 결제 진행은 비동기로 처리
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/cfb6e113-32cd-44cb-a8aa-3ddc4c0ec3ed"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/cfb6e113-32cd-44cb-a8aa-3ddc4c0ec3ed?type=w580" width="500">
 </a>
 
@@ -123,7 +125,7 @@
 - 결제 버튼을 누르면 카카오페이로 결제가 진행
 - 결제 진행은 비동기로 처리
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/1eb9eac3-cd8c-452f-bd55-4a046caa0a57"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/1eb9eac3-cd8c-452f-bd55-4a046caa0a57?type=w580" width="500">
 </a>
 
@@ -132,7 +134,7 @@
 - 결제 버튼을 누르면 카카오페이로 결제가 진행
 - 결제 진행은 비동기로 처리
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/78cab804-7bbd-4570-9548-c60459c8a398"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/78cab804-7bbd-4570-9548-c60459c8a398?type=w580" width="500">
 </a>
 
@@ -141,6 +143,6 @@
 - 결제 버튼을 누르면 카카오페이로 결제가 진행
 - 결제 진행은 비동기로 처리
 
-<a href=""> 
+<a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/be3134f5-19d9-4225-8eac-418b4fb47469"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/be3134f5-19d9-4225-8eac-418b4fb47469?type=w580" width="500">
 </a>
