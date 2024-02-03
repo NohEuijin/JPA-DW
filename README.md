@@ -36,7 +36,7 @@
 <details open>
 <summary>ERD</summary>
   
-  <a href='https://ifh.cc/v-H9Fj40' target='_blank'><img src='https://github.com/NohEuijin/JPA-DW/assets/141835418/c46f7e89-697f-4b4b-bda2-7ec5481f3248' border='0'></a>
+  <a href='https://ifh.cc/v-CsWvC9' target='_blank'><img src='https://github.com/NohEuijin/JPA-DW/assets/141835418/c46f7e89-697f-4b4b-bda2-7ec5481f3248' border='0'></a>
 
 </details>
 
