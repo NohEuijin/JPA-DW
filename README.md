@@ -33,12 +33,8 @@
 ## 💡페이지 흐름
 
 <details open>
-<summary>회원 페이지 흐름도</summary>
 <img src='https://github.com/NohEuijin/JPA-DW/assets/141835418/2840096d-a01d-4065-8635-74585a91c089' border='0'>
-
-<summary>관리자 페이지 흐름도</summary>
 <img src='https://github.com/NohEuijin/JPA-DW/assets/141835418/a0b9f8a9-d5e3-48a8-9afa-8a12c4837ee0' border='0'>
-
 </details>
 
 ## 💡ERD구성
