@@ -64,20 +64,17 @@
 ## 🧒담당 작업
 
 ### 🐶자유게시판 <a href=""> WIKI로 이동</a>
-- 로그인시 세션 유지
-- 세션에 따른 헤더 메뉴 등 매핑 다름
-- 세션의 레벨에 따라 000 님 , 000 상담사 님 , 000 관리자 님 으로 구분
-- 세션의 레벨에 따라 드롭다운 목록이 변경
+- **기본 CRUD** : 글 쓰기, 글 상세 보기, 글 수정, 글 삭제
+- **댓글 CRUD** : 댓글 쓰기, 댓글 보기, 댓글 수정, 댓글 삭제
+- **파일 처리** : 이미지 파일 넣기, 이미지 보기, 이미지 수정 시 삭제 후 수정
+- **검색 기능** : 게시글 검색, 최신순, 인기순, 댓글순
+- **추가 기능** : 조회수, 댓글수, 회원이미지, 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/f5495e28-e4fb-4f9e-a362-e6bc4033e61d"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/f5495e28-e4fb-4f9e-a362-e6bc4033e61d?type=w580" width="500">
 </a>
 
 ### 🐶공지사항<a href=""> WIKI로 이동</a>
-- 상담사는 유료상담사, 무료상담사로 구분
-- 상담사 회원은 결제를 완료하면 유료 상담사로 활동이 가능
-- 유료 상담사는 등록 페이지에서 비용을 입력 가능한 칸이 나타남
-- 상담사의 프로필 이미지를 첨부파일로 등록이 가능
-
+- 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/581b5f80-7a80-4f19-8535-0fdbdcfaffe6"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/581b5f80-7a80-4f19-8535-0fdbdcfaffe6?type=w580" width="500">
 </a>
