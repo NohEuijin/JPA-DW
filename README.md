@@ -68,30 +68,31 @@
 - **댓글 CRUD** : 댓글 쓰기, 댓글 보기, 댓글 수정, 댓글 삭제
 - **파일 처리** : 이미지 파일 넣기, 이미지 보기, 이미지 수정 시 삭제 후 수정
 - **검색 기능** : 게시글 검색, 최신순, 인기순, 댓글순
-- **추가 기능** : 조회수, 댓글수, 회원이미지, 
+- **추가 기능** : 조회수 중복 방지, 페이징 처리
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/f5495e28-e4fb-4f9e-a362-e6bc4033e61d"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/f5495e28-e4fb-4f9e-a362-e6bc4033e61d?type=w580" width="500">
 </a>
 
 ### 🐶공지사항<a href=""> WIKI로 이동</a>
-- 
+- **검색 기능**
+- **공지사항 보기**
+- **추가 기능** : 조회수 중복 방지, 페이징 처리
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/581b5f80-7a80-4f19-8535-0fdbdcfaffe6"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/581b5f80-7a80-4f19-8535-0fdbdcfaffe6?type=w580" width="500">
 </a>
 
 ### 🐶쇼핑(리스트)<a href=""> WIKI로 이동</a>
-- 비용을 기준으로 찾아와 보여줌.
-
+- **검색 기능** : 물품 검색, 인기순, 최신순, 낮은 가격순, 높은 가격 순
+- **리스트 검색 기능** : 전체, 간식, 영양제, 위생용품, 이동장, 장난감, 산책용품
+- **추가 기능** : 페이징 처리, 장바구니 담기, 장바구니 이동, 리뷰 평균 별점 보기, 리뷰 갯수 보기
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/8d500331-d885-499d-8693-80d5efd10f0f"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/8d500331-d885-499d-8693-80d5efd10f0f?type=w580" width="500">
 </a>
 
 ### 🐶 쇼핑(상세보기)<a href=""> WIKI로 이동</a>
-- 상담사 목록에서 상담사 프로필 클릭시 상세보기로 이동
-- 로그인한 본인의 상담사 상세보기 페이지라면 삭제가 가능
-- 예약 버튼 클릭 시 예약 페이지로 이동
-- 상담 후 댓글이 가능
-
+- **문의 CRUD** : 문의 쓰기, 문의 보기, 글 수정, 글 삭제
+- **리뷰 보기**
+- **추가 기능** : 장바구니 담기, 장바구니 이동, 리뷰 평균 별점 보기, 리뷰 갯수 보기
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/9d2315e5-8a67-4d31-a7c1-b7f21dbdadf8"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/9d2315e5-8a67-4d31-a7c1-b7f21dbdadf8?type=w580" width="500">
 </a>
