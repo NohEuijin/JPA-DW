@@ -90,55 +90,44 @@
 </a>
 
 ### 🐶 쇼핑(상세보기)<a href=""> WIKI로 이동</a>
-- **문의 CRUD** : 문의 쓰기, 문의 보기, 글 수정, 글 삭제
 - **리뷰 보기**
-- **추가 기능** : 장바구니 담기, 장바구니 이동, 리뷰 평균 별점 보기, 리뷰 갯수 보기
+- **문의 CRUD** : 문의 쓰기, 문의 보기, 글 수정, 글 삭제
+- **추가 기능** : 장바구니 담기, 장바구니 이동, 리뷰 평균 별점 보기, 리뷰 갯수 보기, 상품 이미지 파일 처리
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/9d2315e5-8a67-4d31-a7c1-b7f21dbdadf8"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/9d2315e5-8a67-4d31-a7c1-b7f21dbdadf8?type=w580" width="500">
 </a>
 
 ### 🐶장바구니<a href=""> WIKI로 이동</a>
-- 상담사는 로그인시 드롭다운에 상담예약관리가 생김
-- 상담 예약 관리 페이지에서는 이름, 상담날짜, 시간으로 검색이 가능(비동기)
-- 해당 페이지는 10을 기준으로 페이징 처리(비동기)
-- 상담을 예약한 회원의 정보를 번호와 이메일, 상담 내역을 모달창으로 확인 가능(비동기
-- 상담취소 또는 상담완료 버튼으로 관리 가능
+- **기능** : 물품 장바구니 추가 및 장바구니 추가 후 이동
+- **세션 기능** : 로그아웃 후 로그인시, 해당 회원 장바구니 물품 유지
+- **물품 개수 추가 및 삭제**
 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/009d9089-1679-492d-a493-0921e7cab25b"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/009d9089-1679-492d-a493-0921e7cab25b?type=w580" width="500">
 </a>
 
-### 🐶장바구니(결제)<a href=""> WIKI로 이동</a>
-- 제휴를 등록하면 유료상담사가 됨
-- 결제 버튼을 누르면 카카오페이로 결제가 진행
-- 결제 진행은 비동기로 처리
+### 🐶장바구니 확인(주문서 작성)<a href=""> WIKI로 이동</a>
 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/cfb6e113-32cd-44cb-a8aa-3ddc4c0ec3ed"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/cfb6e113-32cd-44cb-a8aa-3ddc4c0ec3ed?type=w580" width="500">
 </a>
 
 ### 🐶장바구니(결제진행)<a href=""> WIKI로 이동</a>
-- 제휴를 등록하면 유료상담사가 됨
-- 결제 버튼을 누르면 카카오페이로 결제가 진행
-- 결제 진행은 비동기로 처리
+- 정보를 받아 카카오결제
 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/1eb9eac3-cd8c-452f-bd55-4a046caa0a57"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/1eb9eac3-cd8c-452f-bd55-4a046caa0a57?type=w580" width="500">
 </a>
 
 ### 🐶카카오(결제)<a href=""> WIKI로 이동</a>
-- 제휴를 등록하면 유료상담사가 됨
-- 결제 버튼을 누르면 카카오페이로 결제가 진행
-- 결제 진행은 비동기로 처리
+- 완료 후 DB 저장 
 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/78cab804-7bbd-4570-9548-c60459c8a398"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/78cab804-7bbd-4570-9548-c60459c8a398?type=w580" width="500">
 </a>
 
 ### 🐶리뷰작성(결제완료후)<a href=""> WIKI로 이동</a>
-- 제휴를 등록하면 유료상담사가 됨
-- 결제 버튼을 누르면 카카오페이로 결제가 진행
-- 결제 진행은 비동기로 처리
+- 결제 후 리뷰 작성 시, 해당 상품 리뷰 확인 가능
 
 <a href="https://github.com/NohEuijin/JPA-DW/assets/141835418/be3134f5-19d9-4225-8eac-418b4fb47469"> 
  <img src="https://github.com/NohEuijin/JPA-DW/assets/141835418/be3134f5-19d9-4225-8eac-418b4fb47469?type=w580" width="500">
