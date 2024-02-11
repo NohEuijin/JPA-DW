@@ -13,9 +13,11 @@ public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long> {
     //기본키로 검색
     Optional<FreeBoard> findById(Long freeBoardId);
 
-    // 조회수 증가
+    /**
+     * 자유게시판 조회수 증가 쿼리
+     * @param freeBoardId 자유게시판 번호
+     */
     @Modifying
     @Query("UPDATE FreeBoard SET freeBoardViewCount = freeBoardViewCount + 1 WHERE id = :freeBoardId")
     int increaseViewCount(@Param("freeBoardId") Long freeBoardId);
-
 }

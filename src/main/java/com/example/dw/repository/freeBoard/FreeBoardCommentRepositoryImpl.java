@@ -18,6 +18,10 @@ public class FreeBoardCommentRepositoryImpl implements FreeBoardCommentCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    /**
+     * 자유게시판 댓글 리스트 조회
+     * @param freeBoardId 자유게시판 번호
+     */
     @Override
     public List<FreeBoardCommentDto> findFreeBoardCommentsByFreeBoardId(Long freeBoardId){
         return jpaQueryFactory.select(new QFreeBoardCommentDto(

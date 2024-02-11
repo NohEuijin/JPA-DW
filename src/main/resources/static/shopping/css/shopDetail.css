@@ -187,6 +187,7 @@ body,html,input {
 }
 .right-box1-box4 span{
   white-space: break-spaces;
+  text-align: start;
 }
 
 .right-box1-box5{

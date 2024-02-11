@@ -20,14 +20,16 @@ public class OrderApiController {
 
     /**
      * 결제시 데이터 받아오기
+     * @param orderForm 주문서 저장을 위한 폼
+     * @param session 세션
+     * @throws IOException 입출력 예외 처리
      */
     @PostMapping("/orderList")
-    public void orderList(@RequestBody OrderForm orderForm, HttpSession httpSession) throws IOException {
-        Long userId = (Long)httpSession.getAttribute("userId");
+    public void orderList(@RequestBody OrderForm orderForm, HttpSession session) throws IOException {
+        Long userId = (Long)session.getAttribute("userId");
         orderForm.setUserId(userId);
-
         try {
-            orderService.register(orderForm, httpSession);
+            orderService.register(orderForm, session);
             System.out.println("orderForm"+orderForm);
 
         }catch (Exception e){
@@ -36,17 +38,18 @@ public class OrderApiController {
     }
 
     /**
-     * 결제시 데이터 단건 받아오기
+     * 결제시 단건 데이터 받아오기
+     * @param orderForm 주문서 저장을 위한 폼
+     * @param session 세션
+     * @throws IOException 입출력 예외 처리
      */
     @PostMapping("/orderSinglePay")
-    public void orderSinglePay(@RequestBody OrderForm orderForm, HttpSession httpSession) throws IOException {
-        Long userId = (Long)httpSession.getAttribute("userId");
+    public void orderSinglePay(@RequestBody OrderForm orderForm, HttpSession session) throws IOException {
+        Long userId = (Long)session.getAttribute("userId");
         orderForm.setUserId(userId);
-
         try {
-            orderService.registerSingle(orderForm, httpSession);
+            orderService.registerSingle(orderForm, session);
             System.out.println("orderForm"+orderForm);
-
         }catch (Exception e){
             e.printStackTrace();
         }

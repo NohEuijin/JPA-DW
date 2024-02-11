@@ -34,10 +34,14 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
     private final EntityManager em;
 
+    /**
+     * 자유게시판 상세 정보 목록
+     */
     @Override
     public List<FreeBoardResultDetailDto> findFreeBoardById(Long id) {
         List<FreeBoardDetailDto> list = getFreeBoardDetail(id);
 
+        // 상세정보, 이미지 정보 매핑 후 매핑 정보 기반으로 객체 생성
         List<FreeBoardResultDetailDto> result = list.stream().collect(groupingBy(r -> new FreeBoardResultDetailDto(
                         r.getId(),r.getFreeBoardTitle(),r.getFreeBoardContent(),r.getFreeBoardRd(),r.getFreeBoardMd(),
                         r.getFreeBoardViewCount(),r.getUserId(),r.getUserAccount(),r.getUserNickName(),r.getUserFileId(),
@@ -53,12 +57,14 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
                 .collect(Collectors.toList());
 
         System.out.println(result.toString()+"FreeBoardResultDetailDto 조회!!");
-
         return result;
-
     }
 
-    // 게시판 번호를 보내주면 데이터가 뽑히는지 확인
+    /**
+     * 자유게시판 상세 조회
+     * @param id freeBoardId
+     * @return 조회 값
+     */
     private List<FreeBoardDetailDto> getFreeBoardDetail(Long id) {
         System.out.println(id + "의 아이디 조회!");
         List<FreeBoardDetailDto> freeBoardDetailDtos = jpaQueryFactory
@@ -93,7 +99,11 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
         return freeBoardDetailDtos;
     }
 
-    //페이징을 위한 자유게시판 리스트 개수 조회
+    /**
+     * 자유게시판 갯수 조회
+     * @param keyword 검색
+     * @return 갯수
+     */
     private Long getCount(String keyword) {
         Long count = jpaQueryFactory
                 .select(freeBoard.count())
@@ -104,8 +114,9 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
     }
 
     /**
-     * 자유게시판
-     * 최신순, 인기순, 댓글순 리스트를 조회 하기위한 분기 처리
+     * 자유게시판 cate 조회
+     * @param searchForm 검색
+     * @return 최신순, 인기순, 댓글순, 기본값 freeBoardId 순
      */
     private OrderSpecifier<?> getDynamicSoft(SearchForm searchForm){
 
@@ -113,7 +124,11 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
         switch (searchForm.getCate()){
             case "freeBoardRd" :
                 System.out.println("최신순 조회");
-                return freeBoard.freeBoardRd.desc();
+                if (freeBoard.freeBoardMd == null){
+                    return freeBoard.freeBoardRd.desc();
+                }else{
+                    return freeBoard.freeBoardMd.desc();
+                }
             case "freeBoardCommentCount" :
                 System.out.println("댓글순 조회");
                 return freeBoard.freeBoardComment.size().desc();
@@ -121,22 +136,24 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
                 System.out.println("인기순 조회");
                 return freeBoard.freeBoardViewCount.desc();
             default:
-                return freeBoard.freeBoardRd.desc();
+                return freeBoard.id.desc();
         }
     }
 
     /**
-     * 자유게시판 리스트
+     * 자유게시판 리스트 조회
+     * @param pageable 페이징
+     * @param searchForm 검색
+     * @return
      */
     @Override
     public Page<FreeBoardListDto> findFreeBoardListBySearch(Pageable pageable,SearchForm searchForm) {
 
-        //검색
+        //검색 조건 설정
         BooleanExpression keywordTitle = freeBoardTitleEq(searchForm.getKeyword());
-
+        //정렬 기준 동적 설정 조회
         System.out.println(getDynamicSoft(searchForm)+"조회!!");
 
-        //페이징 및 검색조건 적용, freeBoard 엔티티 조회
         List<FreeBoardDto> content = jpaQueryFactory
                 .select(new QFreeBoardDto(
                         freeBoard.id,
@@ -170,11 +187,11 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
                 = content.stream().map(freeBoardDto -> {
 
             //댓글수 쿼리
-                    Long commentCount = jpaQueryFactory
-                            .select(freeBoardComment.id.count())
-                            .from(freeBoardComment)
-                            .where(freeBoardComment.freeBoard.id.eq(freeBoardDto.getId()))
-                            .fetchOne();
+            Long commentCount = jpaQueryFactory
+                    .select(freeBoardComment.id.count())
+                    .from(freeBoardComment)
+                    .where(freeBoardComment.freeBoard.id.eq(freeBoardDto.getId()))
+                    .fetchOne();
 
             System.out.println(commentCount+"댓글수 입니다.");
 
@@ -243,7 +260,9 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
         return StringUtils.hasText(keyword) ? freeBoard.freeBoardTitle.containsIgnoreCase(keyword) : null;
     }
 
-    //자유게시판 이미지 리스트
+    /**
+     * 자유게시판 이미지 조회
+     */
     @Override
     public List<FreeBoardImgDto> findFreeBoardImgByFreeBoardId(Long freeBoardId) {
         return jpaQueryFactory.select(new QFreeBoardImgDto(
@@ -258,8 +277,9 @@ public class FreeBoardRepositoryImpl implements FreeBoardRepositoryCustom{
                 .fetch();
     }
 
-
-
+    /**
+     * 자유게시판 인기글 TOP3 조회
+     */
     @Override
     public List<FreeBoardDto> findFreeBoardRankByIdId() {
         List<FreeBoardDto> content = jpaQueryFactory

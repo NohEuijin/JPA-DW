@@ -34,7 +34,8 @@
                 <div class="writer-name-date">
                     <div class="writer-name">관리자</div>
                     <div class="info-date">
-                        <div class="written-date" th:text="${notice.noticeBoardRd}"></div>
+                        <div class="written-date" th:if="${notice.noticeBoardMd == null}" th:text="${notice.noticeBoardRd}"></div>
+                        <div class="written-date" th:if="${notice.noticeBoardMd != null}" th:text="${notice.noticeBoardMd}"></div>
                     </div>
                 </div>
             </div>

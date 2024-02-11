@@ -21,10 +21,7 @@ import java.util.Optional;
 @RequestMapping("/shop/*")
 public class GoodsController {
 
-    private final ShopRepositoryCustom shopRepositoryCustom;
-    private final HttpSession httpSession;
     private final GoodsService goodsService;
-    private final GoodsRepository goodsRepository;
 
     /**
      * 쇼핑 리스트 페이지

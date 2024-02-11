@@ -39,7 +39,4 @@ public interface GoodsRepositoryCustom {
 
     //관리자 상품 문의 답변 가져오기
     AdminGoodsQueReplyDto getReplyList(Long qnaId);
-
-
-
 }

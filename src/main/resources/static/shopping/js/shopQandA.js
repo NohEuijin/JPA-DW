@@ -1,32 +1,31 @@
 let goodsId = $('#goodsId').val();
 console.log(goodsId)
+
 let userId = $('#userId').val();
 console.log(userId)
+
 //문의리스트 가져오기
 function getGoodsQna(goodsId, callback){
 
     $.ajax({
-
         url : `/shops/shopQnaList/${goodsId}`,
         type: 'get',
         dataType: 'json',
         success : function (result){
             console.log(result)
             shopDetailView(result)
-
-
             if(callback){
                 callback(result);
             }
-
         }, error : function (a,b,c){
             console.error(c);
         }
-
     })
 }
 
-
+/**
+ * 문의 페이지 이동 버튼 클릭시
+ */
 $('.qna-btn').on('click', function (e){
     e.preventDefault();
     getGoodsQna(goodsId, shopDetailView);
@@ -66,15 +65,11 @@ function shopDetailView(result) {
                     </div>
                 </div>
                     <!-- 모달 창 들어 가는 부분 끝 -->
-
                 </tbody>
             </form>
           </div>
         `;
-
-
     result.forEach(r => {
-
         if(r.id != null){
             text +=`
           <!-- QandA li -->
@@ -83,6 +78,7 @@ function shopDetailView(result) {
                 <div class="comment-text">
                   <p class="reviewWriter">
                   `;
+
         //사용자 닉네임 처리
         if(r.userNickName ==null){
             text+=`<span class="userName">${r.userAccount}</span>`;
@@ -90,15 +86,16 @@ function shopDetailView(result) {
             text+=`<span class="userName">${r.userNickName}</span>`;
         }
         text +=`
-                    <span>-</span>
-                    <time>${formatDate(r.queRegisterDate)}</time>
-                  </p>
+            <span>-</span>
+            <time>${formatDate(r.queRegisterDate)}</time>
+          </p>
 
-                  <div class="description">
-                  <p class="userContent">${r.queContent}</p>
-                  </div>
-
+          <div class="description">
+          <p class="userContent">${r.queContent}</p>
+          </div>
+                  
               </div>
+              
             <!-- 관리자 QandA -->
             ${r.queReplyContent !== null ? `
             <div class="admin-review-box">
@@ -122,11 +119,10 @@ function shopDetailView(result) {
         `}
 
     });
-
     inputSection.html(text)
-
 }
-// 문의 하기 버튼 클릭시 이벤트
+
+// 문의 하기 버튼 클릭시
 $('.shop-form').on('click', '.review-button', function () {
     let userId = $('#userId').val();
     console.log(userId);
@@ -141,6 +137,9 @@ $('.shop-form').on('click', '.review-button', function () {
     }
 });
 
+/**
+ * 모달 창 닫기, 내용 존재 여부에 따른 처리
+ */
 $(document).ready(function() {
 
         $('.shop-form').on('click', '.modal', function (e){

@@ -56,8 +56,8 @@
                                 <div th:if="${freeBoard.userNickName != null}" th:text="${freeBoard.userNickName}"></div>
                             </div>
                             <div class="info-date">
-                                <div class="text-date" th:if="${freeBoard.freeBoardMd ne null}" th:text="${freeBoard.freeBoardMd}"></div>
-                                <div class="text-date" th:unless="${freeBoard.freeBoardMd ne null}" th:text="${freeBoard.freeBoardRd}"></div>
+                                <div class="text-date" th:if="${freeBoard.freeBoardMd == null}" th:text="${freeBoard.freeBoardRd}"></div>
+                                <div class="text-date" th:if="${freeBoard.freeBoardMd != null}" th:text="${freeBoard.freeBoardRd}"></div>
                             </div>
 
                         </div>
@@ -72,7 +72,7 @@
                     </div>
                     <div class="btns-box">
 
-                        <div th:if="${session.userId != null}">
+                        <div th:if="${session.userAccount == freeBoard.userAccount}">
                         <button class="update-btn" th:data-freeBoardId="${freeBoard.id}">수정</button>
                         <button class="remove-btn" th:data-freeBoardId="${freeBoard.id}">삭제</button>
                         </div>

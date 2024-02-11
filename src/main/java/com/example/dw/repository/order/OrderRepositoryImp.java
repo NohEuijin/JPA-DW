@@ -27,10 +27,13 @@ public class OrderRepositoryImp implements OrderRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    /**
+     * @param pageable 페이징
+     * @param userId 유저번호
+     * @return 리뷰 리스트 조회
+     */
     @Override
     public Page<OrderListResultDto> findAllbyId(Pageable pageable, Long userId) {
-
-
 
         List<OrderDto> content = jpaQueryFactory
                 .select(new QOrderDto(
@@ -92,21 +95,14 @@ public class OrderRepositoryImp implements OrderRepositoryCustom{
 
                 }).collect(toList());
 
-
         Long counts = jpaQueryFactory
                 .select(orders.id.count())
                 .from(orders)
                 .where(orders.users.id.eq(userId))
                 .fetchOne();
 
-
         System.out.println(counts);
 
-
         return new PageImpl<>(result, pageable,counts);
-
     }
-
-
-
 }

@@ -1,9 +1,7 @@
-
 //상품 설명
 let goodsId = $('#goodsId').val();
 shopDetail(goodsId);
 console.log(goodsId)
-
 
 // 리뷰 버튼 눌럿을시
 $('.review-btn').on('click', function(e){
@@ -39,9 +37,8 @@ function shopDetailView(result) {
     let text = '';
     let inputSection = $('.row-content');
 
+    if(result.length > 0) {
     result.forEach(r => {
-
-        if(r.id != null){
             text +=`
           <!-- 리뷰 li -->
           <input type="hidden" value="${r.id}">
@@ -92,12 +89,8 @@ function shopDetailView(result) {
                 });
             text += `
                   </div>
-                 
               </div>
-
-
 <!-- 관리자 리뷰 -->
-
 ${r.goodsReviewReplyContent !== null ? `
 <div class="admin-review-box">
     <div class="admin-review">
@@ -117,11 +110,10 @@ ${r.goodsReviewReplyContent !== null ? `
           <!-- 리뷰 li 끝 -->
       </div>
         `;
-        }else {
-            text += ` <div>등록된 리뷰가 없습니다.</div>
-        `}
 
     });
-
+    } else {
+        text += `<div>등록된 리뷰가 없습니다.</div>`;
+    }
     inputSection.html(text)
 }

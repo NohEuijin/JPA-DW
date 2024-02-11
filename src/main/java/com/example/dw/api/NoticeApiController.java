@@ -8,6 +8,7 @@ import com.example.dw.domain.form.SearchForm;
 import com.example.dw.repository.admin.NoticeBoardRepositoryCustom;
 import com.example.dw.repository.freeBoard.FreeBoardRepositoryCustom;
 import com.example.dw.service.FreeBoardService;
+import com.example.dw.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -27,22 +28,19 @@ import java.io.IOException;
 @RequestMapping("/notices/*")
 public class NoticeApiController {
 
-    private final NoticeBoardRepositoryCustom noticeBoardRepositoryCustom;
+    private final NoticeBoardService noticeBoardService;
     /**
-     * 자유게시판 리스트
-     * 페이징, 키워드 검색
+     * 공지사항 리스트
+     * @param page 변수
+     * @param keyword 검색 조건
+     * @return 공지사항 목록
      */
     @GetMapping("/notice/{page}")
     public Page<NoticeListDto> noticeBoardListDto(
             @PathVariable("page") int page, String keyword) {
 
-        System.out.println("공지사항 키워드: " + keyword);
-
         Pageable pageable = PageRequest.of(page, 10);
-        Page<NoticeListDto> result = noticeBoardRepositoryCustom.findNoticeBoardListBySearch(pageable, keyword);
-        System.out.println("공지사항 글 개수 : " + result.stream().count());
 
-        return result;
+        return noticeBoardService.noticeListDtos(pageable, keyword);
     }
-
 }

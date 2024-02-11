@@ -7,9 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderReviewRepositoryCustom {
 
-
     Page<OrderItemReviewListDto> findAllReview(Pageable pageable, Long id);
-
-
-
 }

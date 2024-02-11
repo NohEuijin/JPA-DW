@@ -39,9 +39,6 @@ public class NoticeBoardRepositoryImpl implements NoticeBoardRepositoryCustom {
         return new PageImpl<>(content, pageable, count);
     }
 
-
-
-
     private Long getCount(SearchForm searchForm){
 
         Long count = jpaQueryFactory
@@ -100,10 +97,22 @@ public class NoticeBoardRepositoryImpl implements NoticeBoardRepositoryCustom {
     /**
      * 여기서 부터 Notice Board
      */
+
+    /**
+     * 공지사항 제목에 대한 조건식을 생성
+     * @param keyword 검색
+     * @return 검색 키워드가 비어 있지 않으면 공지사항 제목이 해당 키워드를 포함,
+     * 대소문자를 무시하는 조건식을 생성하고, 그렇지 않으면 null
+     */
     private BooleanExpression noticeBoardTitleEq(String keyword){
         return StringUtils.hasText(keyword) ? noticeBoard.noticeBoardTitle.containsIgnoreCase(keyword) : null;
     }
 
+    /**
+     * 공지사항 갯수 조회
+     * @param keyword 검색
+     * @return 공지사항 갯수
+     */
     private Long getCount(String keyword) {
         Long count = jpaQueryFactory
                 .select(noticeBoard.count())
@@ -113,6 +122,12 @@ public class NoticeBoardRepositoryImpl implements NoticeBoardRepositoryCustom {
         return count;
     }
 
+    /**
+     * 공지사항 목록 조회
+     * @param pageable 페이징
+     * @param keyword 검색
+     * @return 조회된 결과, PageImpl 객체로
+     */
     @Override
     public Page<NoticeListDto> findNoticeBoardListBySearch(Pageable pageable, String keyword) {
 
@@ -137,12 +152,16 @@ public class NoticeBoardRepositoryImpl implements NoticeBoardRepositoryCustom {
 
         //페이징을 위한 전체 데이터 수 조회
         Long count = getCount(keyword);
-
         System.out.println(contents.toString()+"리스트");
 
-        return new PageImpl<>(contents, pageable,count);
+        return new PageImpl<>(contents, pageable, count);
     }
 
+    /**
+     * 공지사항 상세 조회
+     * @param id 변수(공지사항을 선택)
+     * @return 조회된 공지사항 정보를 리스트
+     */
     @Override
     public List<NoticeDetailDto> findNoticeById(Long id) {
         System.out.println(id + "공지사항 아이디 조회");
@@ -165,7 +184,10 @@ public class NoticeBoardRepositoryImpl implements NoticeBoardRepositoryCustom {
         return noticeDetailDtos;
     }
 
-    //공지사항 자주찾는글 top3
+    /**
+     * 공지사항 자주 찾는 글 top3 조회
+     * @return 조회수 기준, 내림차순 정렬, 상위 3개 결과
+     */
     @Override
     public List<NoticeListDto> findNoticeRankListById() {
         return jpaQueryFactory.select(new QNoticeListDto(

@@ -159,6 +159,18 @@ main{
     align-items: center;
     /* background-color: blanchedalmond; */
 }
+.best-content-content p{
+    /*word-wrap: break-word;*/
+    /*영역 감추기*/
+    overflow: hidden;
+    /*... 을 만들기*/
+    text-overflow: ellipsis;
+    /*아래줄로 내려가는 것을 막기*/
+    white-space: nowrap;
+    word-break:break-all;
+    width: 250px;
+    text-align: start;
+}
 .best-content-etc{
     width: 90%;
     height: 30%;

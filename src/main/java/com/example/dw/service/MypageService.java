@@ -206,20 +206,20 @@ public class MypageService {
 
     }
 
+    /**
+     * 리뷰 삭제하기
+     * @param id 삭제할 리뷰 아이디
+     */
     @Transactional
     public void removeReview(Long id){
-
         if(id == null){
             throw new IllegalArgumentException("id 정보가 없습니다.");
         }
-//        Long reviewid =orderReviewRepository.reviewId(id);
         fileService.removeReviewImgs(id);
-        System.out.println(id);
         Long orderItemId =   orderReviewRepository.reviewId(id);
         System.out.println(orderItemId+" 삭제되어 스테이트가 변경되는 번호 입니다.");
         orderItemRepository.downorderreview(orderItemId);
         orderReviewRepository.deleteById(id);
-
     }
 
     //회원 탈퇴

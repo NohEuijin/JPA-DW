@@ -63,7 +63,9 @@ showReplyList(freeBoardId);
 let loginNumber = $('#userId').val();
 console.log(loginNumber)
 
-// '댓글 저장' 버튼 클릭 이벤트 핸들러
+/**
+ * '댓글 저장' 버튼 클릭시
+ */
 $('.btn-reply').on('click', function () {
   let content = $('#reply-content').val();
   let freeBoardId = $('#freeBoardId').val();
@@ -74,7 +76,6 @@ $('.btn-reply').on('click', function () {
     alert('로그인 후 사용해주세요!');
     return;
   }
-
   // 댓글 내용 입력 여부 체크
   if (!content) {
     alert('댓글 내용을 입력해주세요!');
@@ -93,7 +94,7 @@ $('.btn-reply').on('click', function () {
     users: { id: userId },
   };
 
-  // 댓글 저장 함수 호출
+  // 댓글 저장 함수
   getReply(replyObj);
 
   // 댓글 저장 후 댓글 목록 갱신
@@ -117,13 +118,13 @@ function getReply(object){
   })
 }
 
+//댓글 수정
 export function modify(freeBoardCommentId, reply, callback){
 
   $.ajax({
     url : `/replies/modifyComment/${freeBoardCommentId}`,
-    // 'patch' 설정 (업데이트 요청)
+    // 'patch' (업데이트 요청)
     type : 'patch',
-    // JSON 문자열로 변환
     data : JSON.stringify(reply),
     contentType : 'application/json; charset=utf-8',
     success : function (){
@@ -137,10 +138,10 @@ export function modify(freeBoardCommentId, reply, callback){
   });
 }
 
+//댓글 삭제
 export function remove(freeBoardCommentId, callback) {
   $.ajax({
     url: `/replies/deleteComment/${freeBoardCommentId}`,
-    // DELETE 요청
     type: 'delete',
     success: function () {
       if (callback) {
@@ -153,7 +154,7 @@ export function remove(freeBoardCommentId, callback) {
   });
 }
 
-// 댓글 목록을 보여주는 함수 정의
+// 댓글 목록
 function showReplyList(freeBoardId) {
   $.ajax({
     url: `/replies/readComment/${freeBoardId}`,
@@ -171,7 +172,7 @@ function showReplyList(freeBoardId) {
   });
 }
 
-// 댓글 목록 HTML을 생성하는 함수
+// 댓글 목록 HTML 생성
 function freeBoardCommentList(result) {
   let text = '';
 
@@ -223,7 +224,7 @@ function freeBoardCommentList(result) {
 $('.reply-list').on('click', '.reply-btns', function () {
   // 댓글 버튼의 부모 요소인 .reply-btn-box에서 => 자식 .reply-btns__box을 찾아 저장
   let $replyBtnBox = $(this).closest('.reply-btn-box').find('.reply-btns__box');
-  // 버든 숨김 처리
+  // 버튼 숨김
   $('.reply-btns__box').addClass('none');
   // 버튼 숨김/보임 상태 전환
   $replyBtnBox.toggleClass('none');
@@ -250,7 +251,6 @@ $('.reply-list').on('click', '.reply-modify-btn', function () {
   `);
   $('.reply-btns__box').addClass('none');
 });
-
 
 // 리플 수정 완료 처리
 $('.reply-list').on('click', '.modify-content-btn', function () {

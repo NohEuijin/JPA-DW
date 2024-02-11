@@ -29,16 +29,13 @@ console.log(goodsId)
 
 //첫 화면 진입시 
 $(document).ready(function (){
-
     getDetailImgs(goodsId, detailImgList)
-
 })
 
 // 상세 페이지 제품 상세 사진 가져오기
 function getDetailImgs(goodsId, callback){
 
     $.ajax({
-
         url : `/shops/shopDetilImgs/${goodsId}`,
         type:'get',
         dataType:'json',
@@ -62,7 +59,6 @@ $('.basket1 button').on('click', function (e){
     if(confirm("장바구니에 추가하시겠습니까?")){
         let cartItemQuantity = $('#number').text();
         let goodsId = $('#goodsId').val()
-
 
         $.ajax({
             url:`/shops/shopCart/${userId}`,
@@ -131,11 +127,11 @@ function detailImgList(result){
     inputSection.html(text);
 }
 
-// 콤마 찍기 함수
+// 콤마 찍기
 function addCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-// 콤마 찍기 문서가 로드된 후 실행
+// 콤마 찍기 후 실행
 document.addEventListener("DOMContentLoaded", function () {
     // detail.goodsPrice의 값을 가져와서 숫자로 변환 후 콤마 추가하여 출력
     let goodsPrice = document.getElementById("price").textContent;

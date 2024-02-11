@@ -25,23 +25,28 @@ import java.util.stream.Collectors;
 public class FreeBoardApiController {
 
     private final FreeBoardService freeBoardService;
-    private final FreeBoardRepositoryCustom freeBoardRepositoryCustom;
 
     /**
      * 자유게시판 파일처리
+     * fileFreeImg 경로
+     * return getEmpImg 파일 경로를 받아와서 해당 이미지 파일의 바이트 배열을 반환
      */
     @Value("${file.free}")
     private String fileFreeImg;
 
     @GetMapping("/freeImg")
-    public byte[] getEmpImg(String fileFullPath) throws IOException{
+    public byte[] getEmpImg(String fileFullPath) throws IOException {
         return FileCopyUtils.copyToByteArray(new File(fileFreeImg, fileFullPath));
     }
 
+    /**
+     * 유저 이미지 파일처리
+     * userImg 경로
+     * return getEmpImg 파일 경로를 받아와서 해당 이미지 파일의 바이트 배열을 반환
+     */
     @Value("${file.user}")
     private String userImg;
 
-    //유저 사진 불러오기
     @GetMapping("/freeUserImg")
     public byte[] getUserImg(String userImgPath) throws IOException {
         return FileCopyUtils.copyToByteArray(new File(userImg, userImgPath));
@@ -49,7 +54,9 @@ public class FreeBoardApiController {
 
     /**
      * 자유게시판 리스트
-     * 페이징, 키워드 검색
+     * @param page 페이징
+     * @param searchForm 검색
+     * @return 자유게시판 리스트
      */
     @GetMapping("/freeBoardList/{page}")
     public Page<FreeBoardListDto> freeBoardDtoList(
@@ -59,37 +66,6 @@ public class FreeBoardApiController {
         System.out.println(searchForm.getKeyword());
 
         Pageable pageable = PageRequest.of(page, 5);
-        Page<FreeBoardListDto> result = freeBoardRepositoryCustom.findFreeBoardListBySearch(pageable, searchForm);
-        System.out.println("자유게시판 글 개수 : " + result.stream().count());
-
-        return result;
+        return freeBoardService.freeBoardListDtos(pageable, searchForm);
     }
-
 }
-
-
-//    @GetMapping("/freeBoardList/{page}")
-//    public Page<FreeBoardListDto> freeBoardDtoList(
-//            @PathVariable("page") int page, SearchForm searchForm) {
-//
-//        Pageable pageable = PageRequest.of(page, 5);
-//        System.out.println("자유게시판 키워드: " + searchForm);
-//
-//        Page<FreeBoardListDto> result = freeBoardRepositoryCustom.findFreeBoardListBySearch(pageable, searchForm);
-//
-//        // 댓글 수를 추가
-//        List<FreeBoardListDto> updatedList = result.getContent().stream()
-//                .map(dto -> {
-//                    Long commentCount = freeBoardService.countCommentsByFreeBoardId(dto.getId());
-//                    dto.setFreeBoardCommentCount(commentCount);
-//
-//                    // 댓글 수를 출력
-//                    System.out.println("게시물 ID: " + dto.getId() + ", 댓글 수: " + commentCount);
-//                    return dto;
-//                })
-//                .collect(Collectors.toList());
-//
-//        System.out.println("자유게시판 글 개수 : " + result.stream().count());
-//
-//        return new PageImpl<>(updatedList, pageable, result.getTotalElements());
-//    }

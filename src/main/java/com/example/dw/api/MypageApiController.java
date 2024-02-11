@@ -242,28 +242,25 @@ public class MypageApiController {
     }
 
 
-
+    /**
+     * @param page 페이징
+     * @param userId 유저 번호
+     * @return 리뷰 리스트
+     */
     @GetMapping("/mypgs/myreviewlist/{page}/{userId}")
-    public Page<OrderItemReviewListDto> myreviewlist(@PathVariable("page")int page,@PathVariable("userId")Long userId){
-
+    public Page<OrderItemReviewListDto> myreviewlist(
+            @PathVariable("page")int page,@PathVariable("userId")Long userId){
         Pageable pageable = PageRequest.of(page,5);
-
-        Page<OrderItemReviewListDto> result = orderReviewRepositoryCustom.findAllReview(pageable,userId);
-
-
-        return result;
+        return orderReviewRepositoryCustom.findAllReview(pageable,userId);
     }
 
+    /**
+     * 리뷰 삭제
+     * @param id orderItemId 번호
+     */
     @PostMapping("/mypgs/deletereview/{id}")
     public void removeReview(@PathVariable("id")Long id){
-
-        System.out.println("[orderItemId 번호] : " + id);
-
         mypageService.removeReview(id);
-
-
-        System.out.println("완료");
-
     }
 
     @PostMapping("/mypgs/userRemove/{userId}")

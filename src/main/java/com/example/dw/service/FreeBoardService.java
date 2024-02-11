@@ -1,15 +1,22 @@
 package com.example.dw.service;
 
+import com.example.dw.domain.dto.community.FreeBoardDto;
+import com.example.dw.domain.dto.community.FreeBoardListDto;
+import com.example.dw.domain.dto.community.FreeBoardResultDetailDto;
 import com.example.dw.domain.entity.freeBoard.FreeBoard;
 import com.example.dw.domain.form.FreeBoardWritingForm;
+import com.example.dw.domain.form.SearchForm;
 import com.example.dw.repository.freeBoard.FreeBoardCommentRepository;
 import com.example.dw.repository.freeBoard.FreeBoardRepository;
+import com.example.dw.repository.freeBoard.FreeBoardRepositoryCustom;
 import com.example.dw.repository.user.UsersRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,21 +33,43 @@ import java.util.Optional;
 public class FreeBoardService {
 
     private final FreeBoardRepository freeBoardRepository;
-    private final UsersRepository usersRepository;
-    private final HttpSession httpSession;
+    private final FreeBoardRepositoryCustom freeBoardRepositoryCustom;
+
     private final FileService fileService;
-    private final FreeBoardCommentRepository freeBoardCommentRepository;
 
     private final static String VIEWCOOKIENAME = "alreadyViewCookie";
 
-    //글쓰기
+    /**
+     * 자유게시판 리스트
+     * @param pageable 페이징
+     * @param searchForm 검색
+     */
+    @Transactional
+    public Page<FreeBoardListDto> freeBoardListDtos(
+            Pageable pageable, SearchForm searchForm){
+        return freeBoardRepositoryCustom.findFreeBoardListBySearch(pageable, searchForm);
+    }
+
+    /**
+     * 자유게시판 인기글 리스트
+     */
+    @Transactional
+    public List<FreeBoardDto> findFreeBoardRankList(){
+        return freeBoardRepositoryCustom.findFreeBoardRankByIdId();
+    }
+
+    /**
+     * 자유게시판 글 쓰기
+     */
     @Transactional
     public Long register(FreeBoardWritingForm freeBoardWritingForm) throws IOException{
         FreeBoard freeBoard = freeBoardRepository.save(freeBoardWritingForm.toEntity());
         return freeBoard.getId();
     }
 
-    //글 수정
+    /**
+     * 자유게시판 글 수정
+     */
     @Transactional
     public FreeBoard modify(FreeBoardWritingForm freeBoardWritingForm, List<MultipartFile> files)
             throws IOException {
@@ -59,7 +88,9 @@ public class FreeBoardService {
         });
     }
 
-    //자유게시판 글삭제
+    /**
+     * 자유게시판 글 삭제
+     */
     @Transactional
     public void delete(Long freeBoardId){
 
@@ -70,7 +101,21 @@ public class FreeBoardService {
         freeBoardRepository.deleteById(freeBoardId);
     }
 
-    //자유게시판 조회수
+    /**
+     * 자유게시판 상세 글
+     */
+    @Transactional
+    public List<FreeBoardResultDetailDto> freeBoardDetail(Long id){
+        return freeBoardRepositoryCustom.findFreeBoardById(id);
+    }
+
+    /**
+     * 자유게시판 조회수
+     * 요청에서 쿠키를 가져와서 이미 해당 공지사항을 조회한 경우를 확인
+     * 조회한 적이 없는 경우에만 새로운 쿠키를 생성하고 응답에 추가한 후에 조회수를 증가
+     * 만약 쿠키가 존재하지 않는 경우에도 마찬가지로 새로운 쿠키를 생성하고 응답에 추가한 후에 조회수를 증가
+     * @return 조회수 증가 결과
+     */
     @Transactional
     public int increaseViewCount(Long freeBoarId, HttpServletRequest request, HttpServletResponse response){
 
@@ -96,11 +141,11 @@ public class FreeBoardService {
         return result;
     }
 
-    /*
+    /**
      * 조회수 중복 방지를 위한 쿠키 생성 메소드
-     * @param cookie
-     * @return
-     * */
+     * @param postId 변수
+     * @return 생성된 쿠키
+     */
     private Cookie createCookieForForNotOverlap(Long postId) {
         Cookie cookie = new Cookie(VIEWCOOKIENAME+postId, String.valueOf(postId));
         cookie.setComment("조회수 중복 증가 방지 쿠키");	// 쿠키 용도 설명 기재

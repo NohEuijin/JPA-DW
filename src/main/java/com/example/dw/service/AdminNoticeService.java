@@ -2,16 +2,22 @@ package com.example.dw.service;
 
 
 import com.example.dw.domain.dto.admin.AdminDto;
+import com.example.dw.domain.dto.admin.AdminNoticeBoardDto;
+import com.example.dw.domain.dto.notice.NoticeListDto;
 import com.example.dw.domain.entity.admin.Admin;
 import com.example.dw.domain.entity.admin.FaqBoard;
 import com.example.dw.domain.entity.admin.NoticeBoard;
 import com.example.dw.domain.form.FaqBoardForm;
 import com.example.dw.domain.form.NoticeBoardForm;
+import com.example.dw.domain.form.SearchForm;
 import com.example.dw.repository.admin.AdminRepository;
 import com.example.dw.repository.admin.FaqBoardRepository;
 import com.example.dw.repository.admin.NoticeBoardRepository;
+import com.example.dw.repository.admin.NoticeBoardRepositoryCustom;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +31,7 @@ public class AdminNoticeService {
     private final AdminRepository adminRepository;
     private final NoticeBoardRepository noticeBoardRepository;
     private final FaqBoardRepository faqBoardRepository;
-
-
+    private final NoticeBoardRepositoryCustom noticeBoardRepositoryCustom;
 
     //관리자 로그인
     @Transactional
@@ -97,6 +102,8 @@ public class AdminNoticeService {
         faqBoardRepository.deleteById(id);
 
     }
+
+
 
     //공지사항 상세 보기
     @Transactional

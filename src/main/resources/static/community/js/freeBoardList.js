@@ -130,8 +130,6 @@ function showFreeBoardList(result) {
                <tr class="no-search-result">
                     <td colspan="8">검색결과가 없습니다. <br>
                         검색 조건을 다시 확인해주세요.</td>
-           
-           
                </tr>`
 }
 
@@ -175,4 +173,3 @@ dateElements.each(function (index, element) {
     // 변경된 형식으로 날짜를 설정
     $(element).text(formattedDate);
 });
-

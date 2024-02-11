@@ -52,7 +52,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileService {
 
-
     @Value("${file.dir}")
     private String mainImg;
 
@@ -83,7 +82,6 @@ public class FileService {
     private final FreeBoardRepositoryCustom freeBoardRepositoryCustom;
     private final FreeBoardImgRepository freeBoardImgRepository;
 
-
     private final UsersRepository usersRepository;
     private final UserFileRepository userFileRepository;
     private final UsersRepositoryCustom usersRepositoryCustom;
@@ -95,6 +93,14 @@ public class FileService {
     private final OrderReviewRepository orderReviewRepository;
     private final OrderReviewImgRepository orderReviewImgRepository;
     private final OrderReviewImgRepositoryCustom orderReviewImgRepositoryCustom;
+
+    /**
+     * 업로드 경로를 설정
+     * @return 날짜를 기반, "yyyy/MM/dd" 형식 문자열
+     */
+    private String getUploadPath() {
+        return new SimpleDateFormat("yyyy/MM/dd").format(new Date());
+    }
 
     //상품 메인 사진 로컬서버 저장
     @Transactional
@@ -141,7 +147,6 @@ public class FileService {
 
     }
 
-
     //상품 상세 사진 로컬서버 저장(최대 4장)
     @Transactional
     public GoodsDetailImgForm saveDetailImg(MultipartFile file) throws IOException {
@@ -183,13 +188,6 @@ public class FileService {
         }
 
     }
-
-
-    //경로설정
-    private String getUploadPath() {
-        return new SimpleDateFormat("yyyy/MM/dd").format(new Date());
-    }
-
 
     //메인 사진 삭제
     @Transactional
@@ -241,23 +239,33 @@ public class FileService {
 
     }
 
-    //자유게시판 게시판 등록 파일 저장(로컬) 최대 5장
+    /**
+     * 자유게시판 파일처리
+     */
+
+    /**
+     * 자유게시판 게시판 등록 파일 저장(로컬) 최대 5장
+     */
     @Transactional
     public FreeBoardImgForm registerLocalFreeBoardImg(MultipartFile file) throws IOException {
 
-
+        // 업로드된 파일의 원본 이름
         String originName = file.getOriginalFilename();
+        //UUID를 사용하여 파일의 시스템 이름을 생성
         UUID uuid = UUID.randomUUID();
         String sysName = uuid.toString() + "_" + originName;
 
+        //이미지를 업로드할 디렉토리 경로를 설정
         File uploadPath = new File(freeBoardImg, getUploadPath());
-
         if (!uploadPath.exists()) {
             uploadPath.mkdirs();
         }
+        //업로드할 디렉토리가 존재하지 않으면 생성
         File upLoadFile = new File(uploadPath, sysName);
+        //파일을 업로드 경로에 저장
         file.transferTo(upLoadFile);
 
+        //업로드된 이미지 정보를 담은 FreeBoardImgForm 객체를 생성하여 반환
         return
                 FreeBoardImgForm.builder()
                         .freeBoardImgName(originName)
@@ -266,46 +274,48 @@ public class FileService {
                         .build();
     }
 
-    //자유게시판 이미지 DB 저장
+    /**
+     * 자유게시판 이미지 DB 저장
+     * @param files 여러 개의 이미지 파일을 담고 있는 리스트
+     */
     @Transactional
     public void registerDBFreeBoardImg(List<MultipartFile> files, Long freeBoardId) throws IOException {
-        System.out.println("파일 처리 질문 아이기 : " + freeBoardId);
 
         for (MultipartFile file : files) {
+            //이미지파일 로컬에 저장
             FreeBoardImgForm freeBoardImgForm = registerLocalFreeBoardImg(file);
+            //게시물 찾기
             Optional<FreeBoard> freeBoard = freeBoardRepository.findById(freeBoardId);
 
             freeBoardImgForm.setFreeBoard(freeBoard.get());
+            // 데이터베이스에 저장
             freeBoardImgRepository.save(freeBoardImgForm.toEntity());
         }
     }
 
-
     //자유게시판 기존 사진 삭제
     @Transactional
     public void removeFreeBoardDetailImgs(Long freeBoardId) {
-        System.out.println("파일 삭제 아이디 : " + freeBoardId);
+        System.out.println("파일 삭제 번호 : " + freeBoardId);
         if (freeBoardId == null) {
-            throw new IllegalArgumentException("유효하지 않은 상품 번호");
+            throw new IllegalArgumentException("유효하지 않은 자유게시판 번호");
         }
         System.out.println(freeBoardRepositoryCustom.findFreeBoardById(freeBoardId).toString() + "1-------1");
         List<FreeBoardImgDto> freeBoardImgDtos = freeBoardRepositoryCustom.findFreeBoardImgByFreeBoardId(freeBoardId);
-        System.out.println(freeBoardImgDtos.toString() + "나는 누구이인가");
 
+        //가져온 이미지 목록을 반복, 각 이미지 파일을 삭제
         for (FreeBoardImgDto freeBoardImgDto : freeBoardImgDtos) {
             File detailImgTarget = new File(freeBoardImg, freeBoardImgDto.getFreeBoardImgRoute() + "/" + freeBoardImgDto.getFreeBoardImgUuid() + "_" + freeBoardImgDto.getFreeBoardImgName());
-            System.out.println(freeBoardImgDto.toString() + "삭제 파일 입니다.");
+            System.out.println(freeBoardImgDto.toString() + "삭제 파일!");
             if (detailImgTarget.exists()) {
                 detailImgTarget.delete();
 
-                System.out.println("[ 삭제 상품사진 ]" + freeBoardImgDto.getFreeBoardImgRoute() + "/" + freeBoardImgDto.getFreeBoardImgUuid() + "_" + freeBoardImgDto.getFreeBoardImgName() + "\n");
+                System.out.println("[ 삭제 사진 ]" + freeBoardImgDto.getFreeBoardImgRoute() + "/" + freeBoardImgDto.getFreeBoardImgUuid() + "_" + freeBoardImgDto.getFreeBoardImgName() + "\n");
                 freeBoardImgRepository.deleteFreeBoardImgById(freeBoardImgDto.getId());
                 System.out.println("자유게시판 삭제 완료");
             }
-
         }
     }
-
 
     //qna 게시판 등록 파일 저장(로컬) 최대 5장
     @Transactional
@@ -377,6 +387,10 @@ public class FileService {
         }
     }
 
+    /**
+     * 유저 이미지 파일 처리
+     */
+
     //user 이미지 로컬 저장
     @Transactional
     public UserFileForm saveUserFile(MultipartFile file) throws IOException {
@@ -398,56 +412,35 @@ public class FileService {
                         .name(originName)
                         .uuid(uuid.toString())
                         .build();
-
-
     }
 
-    //
     //user 이미지 DB 저장
     @Transactional
     public void registerUserImg(MultipartFile file, Long id) throws IOException {
 
-        //컨트롤러를 통해 받아온 id 값(상품테이블 기본키)을 가지고
-        //GoodsRepository에 만들어놓은 것을 활용
-        //id값을 넣어 해당 id값과 일치하는 상품을 불러오고 이것을 넣어준다.
-        System.out.println(id + "등록장으로 이동 !");
         UserFileForm userFileForm = saveUserFile(file);
         Optional<Users> users = usersRepository.findById(id);
 
         userFileForm.setUsers(users.get());
-
-
         userFileRepository.save(userFileForm.toEntity());
-
     }
 
-    //
     //user 사진 삭제
     @Transactional
     public void removeUserImg(Long userId) {
         System.out.println("파일 삭제 아이디 : " + userId);
         if (userId == null) {
-            throw new IllegalArgumentException("유효하지 않은 상품 번호");
+            throw new IllegalArgumentException("유효하지 않은 유저 번호");
         }
-        System.out.println(usersRepositoryCustom.findAllByUserId(userId).toString() + "1-------1");
-
         List<UserFileDto> userFileDtos = usersRepositoryCustom.findAllByUserId(userId);
-        System.out.println(userFileDtos.toString() + "나는 누구이인가");
 
         for (UserFileDto userFileDto : userFileDtos) {
             File detailImgTarget = new File(userFileImg, userFileDto.getRoute() + "/" + userFileDto.getUuid() + "_" + userFileDto.getName());
-            System.out.println(userFileDto.toString() + "삭제 파일 입니다.");
             if (detailImgTarget.exists()) {
                 detailImgTarget.delete();
-
-                System.out.println("[ 삭제 상품사진 ]" + userFileDto.getRoute() + "/" + userFileDto.getUuid() + "_" + userFileDto.getName() + "\n");
                 userFileRepository.deleteById(userFileDto.getId());
-                System.out.println("완려");
             }
-
         }
-
-
     }
 
     //pet이미지 로컬 저장
@@ -520,11 +513,13 @@ public class FileService {
         }
     }
 
-
-    //review 게시판 등록 파일 저장(로컬) 최대 3장
+     /**
+     * @param file 저장할 파일
+     * @return 저장된 리뷰 이미지에 대한 정보를 가진 리뷰 이미지 폼
+     * @throws IOException 입출력시 예외 처리
+     */
     @Transactional
     public OrderReviewImgForm savereviewImg(MultipartFile file) throws IOException {
-
 
         String originName = file.getOriginalFilename();
         UUID uuid = UUID.randomUUID();
@@ -544,47 +539,45 @@ public class FileService {
                         .reviewimgPath(getUploadPath())
                         .reviewimgUuid(uuid.toString())
                         .build();
-
-
     }
 
-
-    //review 이미지 DB 저장
+    /**
+     * review 이미지 DB 저장
+     * @param files 업로드된 파일 목록
+     * @param reviewId 리뷰 번호
+     * @throws IOException 입출력시 예외 처리
+     */
     @Transactional
     public void registerreviewImg(List<MultipartFile> files, Long reviewId) throws IOException {
         System.out.println("리뷰파일저장 번호 : " + reviewId);
-
         for (MultipartFile file : files) {
             OrderReviewImgForm orderReviewImgForm= savereviewImg(file);
             Optional<OrderReview> orderReview = orderReviewRepository.findById(reviewId);
-
+            // 리뷰 이미지 폼에 주문 리뷰를 설정
             orderReviewImgForm.setOrderReview(orderReview.get());
+            // 리뷰 이미지를 저장
             orderReviewImgRepository.save(orderReviewImgForm.toEntity());
         }
-
     }
 
-
+    /**
+     * 리뷰 삭제 하기기
+     * @param reviewId 리뷰 번호
+     */
     @Transactional
     public void removeReviewImgs(Long reviewId) {
         System.out.println("파일 삭제 아이디 : " + reviewId);
         if (reviewId == null) {
             throw new IllegalArgumentException("유효하지 않은 펫 번호");
         }
-
-          List<OrderReviewImgDto> orderImgDtos = orderReviewImgRepositoryCustom.findReviewImgById(reviewId);
-        System.out.println(orderImgDtos.toString() + "나는 누구이인가");
-
+      List<OrderReviewImgDto> orderImgDtos = orderReviewImgRepositoryCustom.findReviewImgById(reviewId);
         for (OrderReviewImgDto orderImgDto : orderImgDtos) {
             File detailImgTarget = new File(reviewImg, orderImgDto.getReviewimgPath() + "/" + orderImgDto.getReviewimgUuid() + "_" + orderImgDto.getReviewimgFileName());
             System.out.println(orderImgDto.toString() + "삭제 파일 입니다.");
             if (detailImgTarget.exists()) {
                 detailImgTarget.delete();
                 orderReviewImgRepository.deleteById(orderImgDto.getId());
-                System.out.println("제발");
             }
-
         }
     }
-
 }

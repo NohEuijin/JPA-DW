@@ -1,14 +1,5 @@
-// 검색어 입력 이벤트 감지
-// import * as list from './module/list.js'
-// import * as page from './module/page.js';
-
 let userId = $('#userId').val()
 console.log(userId)
-
-//각 버튼에 대한 클래스 변경
-// $('.middle-span').on('click', function (e) {
-//     e.preventDefault();
-// });
 
 // 검색폼 (카테, 키워드 반환)
 function searchGoodsForm(){
@@ -21,25 +12,25 @@ function searchGoodsForm(){
         keyword : keyword
     };
 }
-// 검색폼의 선택값에 따라 카테고리 값을 설정하는 함수
-function updateCategory(cate) {
-    searchGoodsForm.cate = cate;
-    console.log($('#search-cate').val())
-    shop(0,searchGoodsForm(),'goods', 'goodsList', showShopList);
-}
-// 검색 결과 조회
-$('.result-submit-btn').on('click', function (){
-    shop(0,searchGoodsForm(),'goods', 'goodsList', showShopList);
-});
-//초기 데이터(쇼핑 리스트 조회)
-$(document).ready(function (){
-    shop(0,searchGoodsForm(),'goods', 'goodsList', showShopList);
-    enterKey('#shop-search-keyword', '.goods-list-search-btn');
-    // 검색폼 변경시 조회
-    $('#search-cate').change(function() {
-        updateCategory();
-    });
-})
+// // 검색폼의 선택값에 따라 카테고리 값을 설정하는 함수
+// function updateCategory(cate) {
+//     searchGoodsForm.cate = cate;
+//     console.log($('#search-cate').val())
+//     shop(0,searchGoodsForm(),'goods', 'goodsList', showShopList);
+// }
+// // 검색 결과 조회
+// $('.result-submit-btn').on('click', function (){
+//     shop(0,searchGoodsForm(),'goods', 'goodsList', showShopList);
+// });
+// //초기 데이터(쇼핑 리스트 조회)
+// $(document).ready(function (){
+//     shop(0,searchGoodsForm(),'goods', 'goodsList', showShopList);
+//     enterKey('#shop-search-keyword', '.goods-list-search-btn');
+//     // 검색폼 변경시 조회
+//     $('#search-cate').change(function() {
+//         updateCategory();
+//     });
+// })
 
 //엔터키
 function enterKey(a,b){
@@ -59,7 +50,11 @@ function enterKey(a,b){
 // 검색어 입력창에서 검색 버튼 클릭 시 동작
 $('.result-submit-btn').on('click', function () {
     // 전역 변수에 할당하지 않고, 함수 호출 시에 값을 전달
-    shop(0, searchGoodsForm());
+
+    // 카테고리 값 가져오기
+    let cate = $('#search-cate').val();
+    // shop 함수 호출 시 카테고리 값을 전달
+    shop(0, searchGoodsForm(), cate);
 });
 
 //리스트

@@ -18,37 +18,39 @@ import java.util.List;
 @Slf4j
 public class FreeBoardCommentApiController {
 
-    private final FreeBoardCommentRepository freeBoardCommentRepository;
-    private final UsersRepository usersRepository;
     private final FreeBoardCommentService freeBoardCommentService;
 
-    //댓글 데이터 전송하는 POST방식
+    /**
+     * 자유게시판 댓글 등록
+     */
     @PostMapping("/writeComment")
     public void register(@RequestBody FreeBoardCommentForm freeBoardCommentForm) {
-
                 freeBoardCommentService.register(freeBoardCommentForm);
-
     }
-    //댓글 불러오기
-    @GetMapping("/readComment/{freeBoardId}")
-    public List<FreeBoardCommentDto> showReplyList(@PathVariable("freeBoardId") Long freeBoardId){
 
-        if (freeBoardId == null) {
-            throw new IllegalArgumentException("존재하지 않는 게시물 번호");
-        }
-        System.out.println(freeBoardCommentService.getList(freeBoardId).toString());
+    /**
+     * 자유게시판 댓글 불러오기
+     * @param freeBoardId 해당 자유게시판 번호
+     * @return 댓글 목록
+     */
+    @GetMapping("/readComment/{freeBoardId}")
+    public List<FreeBoardCommentDto> showReplyList(
+            @PathVariable("freeBoardId") Long freeBoardId){
       return freeBoardCommentService.getList(freeBoardId);
     }
 
-    // 댓글 수정
+    /**
+     * 자유게시판 댓글 수정
+     */
     @PatchMapping("/modifyComment/{freeBoardCommentId}")
     public void modify(@RequestBody FreeBoardCommentForm freeBoardCommentForm) {
-        System.out.println(freeBoardCommentForm.getFreeBoardCommentContent());
-        System.out.println(freeBoardCommentForm.getId());
         freeBoardCommentService.modify(freeBoardCommentForm);
     }
 
-    //댓글 삭제하기
+    /**
+     * 자유게시판 댓글 삭제
+     * @param freeBoardCommentId 해당 자유게시판 댓글 번호
+     */
     @DeleteMapping("/deleteComment/{freeBoardCommentId}")
     public void delete(@PathVariable Long freeBoardCommentId) {
         freeBoardCommentService.remove(freeBoardCommentId);

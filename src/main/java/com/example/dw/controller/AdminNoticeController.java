@@ -74,7 +74,6 @@ public class AdminNoticeController {
     @GetMapping("/noticeList")
         public String noticeList(){
             return "/admin/adminNoticeList";
-
     }
 
     //공지사항 작성 페이지 이동

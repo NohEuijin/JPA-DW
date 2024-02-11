@@ -1,10 +1,5 @@
-
-
-
-
 // 리스트 불러오기
 export function list(page,searchForm,name,section,callback) {
-
 
     $.ajax({
 
@@ -28,11 +23,8 @@ export function list(page,searchForm,name,section,callback) {
     })
 }
 
-
-
 // 리스트 불러오기
 export function listSearchDto(page,searchForm,name,section,callback) {
-
 
     $.ajax({
 

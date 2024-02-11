@@ -10,10 +10,4 @@ public interface OrderRepositoryCustom {
 
     //해당 유저가 주문한 주문내역 전체 조회
     Page<OrderListResultDto> findAllbyId(Pageable pageable, Long userId);
-
-//    List<OrderListResultDto> findAllById(Long userId);
-
-
-
-
 }

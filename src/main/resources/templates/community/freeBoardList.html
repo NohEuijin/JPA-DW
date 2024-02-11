@@ -47,9 +47,10 @@
                         <div class="best-content-title"><p th:text="${freeBoard.freeBoardTitle}"></p></div>
                         <div class="best-content-content"><p th:text="${freeBoard.freeBoardContent}"></p></div>
                         <div class="best-content-etc">
-                            <div class="best-cotnent-reply">댓글<span th:text="${freeBoard.freeBoardViewCount}"></span></div>
+                            <div class="best-cotnent-reply">조회수 : <span th:text="${freeBoard.freeBoardViewCount}"></span></div>
                             <div class="info-date">
-                                <div class="best-content-date" th:text="${freeBoard.freeBoardRd}"></div>
+                                <div class="best-content-date" th:if="${freeBoard.freeBoardMd == null}" th:text="${freeBoard.freeBoardRd}"></div>
+                                <div class="best-content-date" th:if="${freeBoard.freeBoardMd != null}" th:text="${freeBoard.freeBoardMd}"></div>
                             </div>
 
                         </div>

@@ -289,3 +289,10 @@ body,html,input,button {
   margin: 100px auto;
 }
 /* 메인 끝 */
+.check-icon {
+  position: absolute;
+  z-index: 99;
+  right: 473px;
+  color:  green;
+  top: 706px;
+}

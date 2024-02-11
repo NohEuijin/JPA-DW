@@ -14,12 +14,8 @@ public class WebConfig implements WebMvcConfigurer {
     private String questionPath;
     @Value("${file.free}")
     private String freeBoardPath;
-
-
     @Value("${file.review}")
     private String reviewPath;
-
-    // 사용자 프로필 저장 공간
     @Value("${file.user}")
     private String userFilePath;
     @Value("${file.pet}")
@@ -37,10 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:"+petImgPath)
                 .addResourceLocations("file:"+reviewPath);
 
-
         //로컬 디스크 경로는 file: 을 반드시 사용해야한다.
         registry.addResourceHandler("/common/**")
                 .addResourceLocations("classpath:/static/common/");
     }
-
 }

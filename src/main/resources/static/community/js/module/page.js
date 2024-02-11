@@ -33,7 +33,6 @@ export function pagination(result, paginations) {
             }
         }
 
-
         //화살표 >
         if (currentPage < totalPages - 1) {
             paginations.append(`<li><a href="#" data-page="${currentPage + 1}">&gt;</a></li>`);
@@ -41,11 +40,7 @@ export function pagination(result, paginations) {
             paginations.append(`<li></li>`)
         }
     }
-
-
 }
-
-
 
 export function enterKey(a,b){
     $(a).keypress(function(e){

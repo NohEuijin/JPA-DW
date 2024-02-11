@@ -39,101 +39,20 @@ import static java.util.stream.Collectors.groupingBy;
 public class ShopRepositoryImpl implements ShopRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final EntityManager em;
 
-    @Override
-    public List<GoodsDetailImgDto> findGoodsDetailImg(Long goodsId) {
-        return jpaQueryFactory.select(new QGoodsDetailImgDto(
-                goodsDetailImg.id,
-                goodsDetailImg.goodsDetailImgName,
-                goodsDetailImg.goodsDetailImgPath,
-                goodsDetailImg.goodsDetailImgUuid
-        ))
-                .from(goodsDetailImg)
-                .where(goodsDetailImg.goods.id.eq(goodsId))
-                .fetch();
-    }
-
-
-    @Override
-    public CartDto findCartIdByUserId(Long userId) {
-        CartDto cartDto = jpaQueryFactory.select(new QCartDto(
-                cart.id,
-                cart.users.id
-        ))
-                .from(cart)
-                .leftJoin(cart.users, users)
-                .where(cart.users.id.eq(userId))
-                .fetchOne();
-        return cartDto;
-    }
-
-    //장바구니 아이템으로 들어가기 위해 id체크
-    @Override
-    public boolean checkGoodsId(Long goodsId, Long userId, Long cartId) {
-        CartItemCheckDto check =
-         jpaQueryFactory.select(new QCartItemCheckDto(
-                cartItem.id,
-                cartItem.goods.id,
-                cartItem.cart.id,
-                cartItem.cart.users.id
-        ))
-                .from(cartItem)
-                .leftJoin(cartItem.goods, goods)
-                .leftJoin(cartItem.cart, cart)
-                .leftJoin(cart.users, users)
-                .where(cartItem.goods.id.eq(goodsId),
-                        cart.users.id.eq(userId))
-                .fetchOne();
-
-        if(check==null){
-            return false;
-        }else if(check.getGoodsId()==goodsId){
-            return true;
-        }else{
-            return false;
-        }
-
-    }
-
-    //카트 아이템 조회
-    @Override
-    public List<GoodsCartItemDto> findGoodsCartItemById(Long cartId, Long userId) {
-        List<GoodsCartItemDto> contents = jpaQueryFactory
-                .select(new QGoodsCartItemDto(
-                        cartItem.id,
-                        cartItem.cartItemQuantity,
-                        cart.id,
-                        cart.users.id,
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid
-                ))
-                .from(cartItem)
-                .leftJoin(cartItem.goods, goods)
-                .leftJoin(cartItem.goods.goodsMainImg, goodsMainImg)
-                .leftJoin(cartItem.cart, cart)
-                .leftJoin(cart.users, users)
-                .where(cart.id.eq(cartId).and(
-                        cart.users.id.eq(userId)
-                ))
-                .fetch();
-
-        return contents;
-    }
-
-    // 상품이름 으로 키워드 검색용
+    /**
+     * 상품이름 으로 키워드 검색용
+     * @param keyword 키워드 검색
+     * @return 키워드가 비어있는지 조건을 확인 하여 반환
+     */
     private BooleanExpression goodsNameEq(String keyword){
         return StringUtils.hasText(keyword) ? goods.goodsName.containsIgnoreCase(keyword) : null;
     }
 
     /**
-     * 쇼핑 리스트 분기 처리
+     * 쇼핑 리스트 검색 조건
+     * @param searchForm 검색
+     * @return 정렬 조건 반환
      */
     private OrderSpecifier<?> getDynamicSoft(SearchForm searchForm){
 
@@ -141,6 +60,7 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
         switch (searchForm.getCate()){
             case "goodsRegisterDate" :
                 System.out.println("최신순 조회");
+                //등록 날짜 내림차순
                 return goods.goodsRegisterDate.desc();
             case "goodsPriceUp" :
                 System.out.println("높은 가격 순 조회");
@@ -148,337 +68,64 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
             case "goodsPriceDown" :
                 System.out.println("낮은 가격 순 조회");
                 return goods.goodsPrice.asc();
-            //판매량 기준
             case "goodsPopularitySort" :
                 System.out.println("인기순 조회");
+                //판매량 내림차순
                 return goods.saleCount.desc();
             default:
                 return goods.saleCount.desc();
         }
     }
-    // 카테고리 검색
-//    private BooleanExpression getCategoryEq(String cate) {
-//        System.out.println("나는카테2"+cate);
-//        if (cate == null) {
-//            return null;
-//        }
-//        switch (cate) {
-//            case "간식":
-//                return goods.goodsCategory.eq(GoodsCategory.간식);
-////                .and(goods.goodsName.eq(keyword))
-//            case "영양제":
-//                return goods.goodsCategory.eq(GoodsCategory.영양제);
-//            case "위생용품":
-//                return goods.goodsCategory.eq(GoodsCategory.위생용품);
-//            case "이동장":
-//                return goods.goodsCategory.eq(GoodsCategory.이동장);
-//            case "장난감":
-//                return goods.goodsCategory.eq(GoodsCategory.장난감);
-//            case "산책용품":
-//                return goods.goodsCategory.eq(GoodsCategory.산책용품);
-//            default:
-//                return null;
-//        }
-//    }
 
-    // 쇼핑 상품 리스트 조회
+    /**
+     * @param pageable 페이징
+     * @param searchForm 검색 조건
+     * @return 상품 카테고리 조건 별 검색
+     */
     @Override
     public Page<GoodsListDto> findGoodsListAll(Pageable pageable, SearchForm searchForm) {
-        // 검색
-        BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
-        // 카테고리별 검색
-//        BooleanExpression categoryEq = getCategoryEq(searchForm.getCate());
-        // 동적 정렬 설정
-        OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        List<GoodsListDto> contents = jpaQueryFactory
-                .select(new QGoodsListDto(
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goods.goodsMade,
-                        goods.goodsRegisterDate,
-                        goods.goodsModifyDate,
-                        goods.goodsCategory.stringValue(),
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid,
-                        jpaQueryFactory.select(
-                                orderReview.rating.avg().coalesce(0.0)
-                        )
-                        .from(orderReview)
-                        .where(orderReview.orderItem.goods.id.eq(goods.id)),
-                        jpaQueryFactory.select(
-                                orderReview.count()
-                        )
-                        .from(orderReview)
-                        .where(orderReview.orderItem.goods.id.eq(goods.id))
-                ))
-                .from(goods)
-                .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle)
-                .orderBy(dynamicOrder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-//        contents.stream().forEach(r-> System.out.println(r.getGoodsName()));
-//        contents.stream().forEach(r-> System.out.println(r.getRatingAvg()));
-//        contents.stream().forEach(r-> System.out.println(r.getReviewCount()));
-
-        System.out.println(contents);
-        // 페이징을 위한 전체 데이터 수 조회
-        Long count = getCount(searchForm.getKeyword());
-
-        return new PageImpl<>(contents, pageable, count);
+        return findGoodsListByCategory(pageable, searchForm, null);
     }
-
-
-    //쇼핑 간식 리스트 조회
     @Override
     public Page<GoodsListDto> findGoodsAList(Pageable pageable, SearchForm searchForm) {
-        // 검색
-        BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
-        // 동적 정렬 설정
-        OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        BooleanExpression categorySnack = goods.goodsCategory.eq(GoodsCategory.간식);
-
-        List<GoodsListDto> contents = jpaQueryFactory
-                .select(new QGoodsListDto(
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goods.goodsMade,
-                        goods.goodsRegisterDate,
-                        goods.goodsModifyDate,
-                        goods.goodsCategory.stringValue(),
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid,
-                        jpaQueryFactory.select(
-                                orderReview.rating.avg().coalesce(0.0)
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id)),
-                        jpaQueryFactory.select(
-                                orderReview.count()
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id))
-                ))
-                .from(goods)
-                .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle, categorySnack)
-                .orderBy(dynamicOrder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        // 페이징을 위한 전체 데이터 수 조회
-        Long count = getCount(searchForm.getKeyword());
-
-        return new PageImpl<>(contents, pageable, count);
+        return findGoodsListByCategory(pageable, searchForm, GoodsCategory.간식);
     }
     @Override
     public Page<GoodsListDto> findGoodsBList(Pageable pageable, SearchForm searchForm) {
-        // 검색
-        BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
-        // 동적 정렬 설정
-        OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        BooleanExpression categorySnack = goods.goodsCategory.eq(GoodsCategory.영양제);
-
-        List<GoodsListDto> contents = jpaQueryFactory
-                .select(new QGoodsListDto(
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goods.goodsMade,
-                        goods.goodsRegisterDate,
-                        goods.goodsModifyDate,
-                        goods.goodsCategory.stringValue(),
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid,
-                        jpaQueryFactory.select(
-                                orderReview.rating.avg().coalesce(0.0)
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id)),
-                        jpaQueryFactory.select(
-                                orderReview.count()
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id))
-                ))
-                .from(goods)
-                .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle, categorySnack)
-                .orderBy(dynamicOrder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        // 페이징을 위한 전체 데이터 수 조회
-        Long count = getCount(searchForm.getKeyword());
-
-        return new PageImpl<>(contents, pageable, count);
+        return findGoodsListByCategory(pageable, searchForm, GoodsCategory.영양제);
     }
-
     @Override
     public Page<GoodsListDto> findGoodsCList(Pageable pageable, SearchForm searchForm) {
-        // 검색
-        BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
-        // 동적 정렬 설정
-        OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        BooleanExpression categorySnack = goods.goodsCategory.eq(GoodsCategory.위생용품);
-
-        List<GoodsListDto> contents = jpaQueryFactory
-                .select(new QGoodsListDto(
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goods.goodsMade,
-                        goods.goodsRegisterDate,
-                        goods.goodsModifyDate,
-                        goods.goodsCategory.stringValue(),
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid,
-                        jpaQueryFactory.select(
-                                orderReview.rating.avg().coalesce(0.0)
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id)),
-                        jpaQueryFactory.select(
-                                orderReview.count()
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id))
-                ))
-                .from(goods)
-                .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle, categorySnack)
-                .orderBy(dynamicOrder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        // 페이징을 위한 전체 데이터 수 조회
-        Long count = getCount(searchForm.getKeyword());
-
-        return new PageImpl<>(contents, pageable, count);
+        return findGoodsListByCategory(pageable, searchForm, GoodsCategory.위생용품);
     }
-
     @Override
     public Page<GoodsListDto> findGoodsDList(Pageable pageable, SearchForm searchForm) {
-        // 검색
-        BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
-        // 동적 정렬 설정
-        OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        BooleanExpression categorySnack = goods.goodsCategory.eq(GoodsCategory.이동장);
-
-        List<GoodsListDto> contents = jpaQueryFactory
-                .select(new QGoodsListDto(
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goods.goodsMade,
-                        goods.goodsRegisterDate,
-                        goods.goodsModifyDate,
-                        goods.goodsCategory.stringValue(),
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid,
-                        jpaQueryFactory.select(
-                                orderReview.rating.avg().coalesce(0.0)
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id)),
-                        jpaQueryFactory.select(
-                                orderReview.count()
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id))
-                ))
-                .from(goods)
-                .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle, categorySnack)
-                .orderBy(dynamicOrder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        // 페이징을 위한 전체 데이터 수 조회
-        Long count = getCount(searchForm.getKeyword());
-
-        return new PageImpl<>(contents, pageable, count);
+        return findGoodsListByCategory(pageable, searchForm, GoodsCategory.이동장);
     }
-
     @Override
     public Page<GoodsListDto> findGoodsEList(Pageable pageable, SearchForm searchForm) {
-        // 검색
-        BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
-        // 동적 정렬 설정
-        OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        BooleanExpression categorySnack = goods.goodsCategory.eq(GoodsCategory.장난감);
-
-        List<GoodsListDto> contents = jpaQueryFactory
-                .select(new QGoodsListDto(
-                        goods.id,
-                        goods.goodsName,
-                        goods.goodsQuantity,
-                        goods.goodsPrice,
-                        goods.goodsMade,
-                        goods.goodsRegisterDate,
-                        goods.goodsModifyDate,
-                        goods.goodsCategory.stringValue(),
-                        goodsMainImg.id,
-                        goodsMainImg.goodsMainImgName,
-                        goodsMainImg.goodsMainImgPath,
-                        goodsMainImg.goodsMainImgUuid,
-                        jpaQueryFactory.select(
-                                orderReview.rating.avg().coalesce(0.0)
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id)),
-                        jpaQueryFactory.select(
-                                orderReview.count()
-                        )
-                                .from(orderReview)
-                                .where(orderReview.orderItem.goods.id.eq(goods.id))
-                ))
-                .from(goods)
-                .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle, categorySnack)
-                .orderBy(dynamicOrder)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        // 페이징을 위한 전체 데이터 수 조회
-        Long count = getCount(searchForm.getKeyword());
-
-        return new PageImpl<>(contents, pageable, count);
+        return findGoodsListByCategory(pageable, searchForm, GoodsCategory.장난감);
     }
-
     @Override
     public Page<GoodsListDto> findGoodsFList(Pageable pageable, SearchForm searchForm) {
-        // 검색
+        return findGoodsListByCategory(pageable, searchForm, GoodsCategory.산책용품);
+    }
+
+    /**
+     * @param pageable 페이징
+     * @param searchForm 검색 조건
+     * @param category 카테고리 조건
+     * @return 카테고리를 기준으로 상품 목록을 검색, 페이징 결과 반환
+     */
+    Page<GoodsListDto> findGoodsListByCategory(
+            Pageable pageable, SearchForm searchForm, GoodsCategory category) {
+
+        // 상품 이름 별 키워드 검색
         BooleanExpression keywordTitle = goodsNameEq(searchForm.getKeyword());
         // 동적 정렬 설정
         OrderSpecifier<?> dynamicOrder = getDynamicSoft(searchForm);
-
-        BooleanExpression categorySnack = goods.goodsCategory.eq(GoodsCategory.산책용품);
+        // 상품 카테고리 별 검색
+        BooleanExpression categoryExpression = category != null ? goods.goodsCategory.eq(category) : null;
 
         List<GoodsListDto> contents = jpaQueryFactory
                 .select(new QGoodsListDto(
@@ -507,7 +154,7 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
                 ))
                 .from(goods)
                 .leftJoin(goods.goodsMainImg, goodsMainImg)
-                .where(keywordTitle, categorySnack)
+                .where(keywordTitle, categoryExpression)
                 .orderBy(dynamicOrder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -518,7 +165,10 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
         return new PageImpl<>(contents, pageable, count);
     }
 
-    //쇼핑 상품 상세 조회
+    /**
+     * @param id 상품 번호
+     * @return 쇼핑 - 상품 상세 조회
+     */
     @Override
     public Optional<GoodsDetailDto> findGoodsById(Long id){
         return Optional.ofNullable(jpaQueryFactory
@@ -553,6 +203,27 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
                 .fetchOne());
     }
 
+    /**
+     * @param goodsId 상품 번호
+     * @return 상품 상세 이미지 조회
+     */
+    @Override
+    public List<GoodsDetailImgDto> findGoodsDetailImg(Long goodsId) {
+        return jpaQueryFactory.select(new QGoodsDetailImgDto(
+                goodsDetailImg.id,
+                goodsDetailImg.goodsDetailImgName,
+                goodsDetailImg.goodsDetailImgPath,
+                goodsDetailImg.goodsDetailImgUuid
+        ))
+                .from(goodsDetailImg)
+                .where(goodsDetailImg.goods.id.eq(goodsId))
+                .fetch();
+    }
+
+    /**
+     * @param id 상품 번호
+     * @return 쇼핑 - 상품 추가 정보 조회
+     */
     @Override
     public Optional<GoodsAddInfoDto> findGoodsAddInfoById(Long id) {
         return Optional.ofNullable(jpaQueryFactory
@@ -568,7 +239,10 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
         );
     }
 
-    //리뷰 조회
+    /**
+     * @param id 상품 번호
+     * @return 쇼핑 - 상품 리뷰 조회
+     */
     @Override
     public List<GoodsReviewListDto> findGoodsReviewById(Long id) {
         List<GoodsReviewDto> reviewDtoList = jpaQueryFactory
@@ -650,9 +324,13 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
                 return rr;
     }
 
+    /**
+     * @param id 상품 번호
+     * @return 쇼핑 - 상품 문의 조회
+     */
     @Override
     public List<GoodsQueDto> findGoodsQueId(Long id) {
-        List<GoodsQueDto> contents = jpaQueryFactory
+        return jpaQueryFactory
                 .select(new QGoodsQueDto(
                         goodsQue.id,
                         goodsQue.queContent,
@@ -673,13 +351,12 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
                 .where(goods.id.eq(id))
                 .orderBy(goodsQue.id.desc())
                 .fetch();
-
-        contents.forEach(r -> System.out.println(r.getId() + "====================="));
-
-        return contents;
     }
 
-    //페이징을 위한 쇼핑 리스트 개수 조회
+    /**
+     * @param keyword 키워드 검색
+     * @return 리스트 갯수 조회 값
+     */
     private Long getCount(String keyword) {
         Long count = jpaQueryFactory
                 .select(goods.count())
@@ -689,6 +366,85 @@ public class ShopRepositoryImpl implements ShopRepositoryCustom {
         return count;
     }
 
+    /**
+     * @param userId 유저 번호
+     * @return 카트 Dto 조회
+     */
+    @Override
+    public CartDto findCartIdByUserId(Long userId) {
+        return jpaQueryFactory.select(new QCartDto(
+                cart.id,
+                cart.users.id
+        ))
+                .from(cart)
+                .leftJoin(cart.users, users)
+                .where(cart.users.id.eq(userId))
+                .fetchOne();
+    }
 
+    /**
+     * 장바구니 아이템으로 들어가기 위해 체크
+     * @param goodsId 상품 번호
+     * @param userId 유저 번호
+     * @param cartId 카트(장바구니) 번호
+     * @return 상품 번호, 사용자 번호, 장바구니 번호를 체크 하여 true, false 반환
+     */
+    @Override
+    public boolean checkGoodsId(Long goodsId, Long userId, Long cartId) {
+        CartItemCheckDto check =
+                jpaQueryFactory.select(new QCartItemCheckDto(
+                        cartItem.id,
+                        cartItem.goods.id,
+                        cartItem.cart.id,
+                        cartItem.cart.users.id
+                ))
+                        .from(cartItem)
+                        .leftJoin(cartItem.goods, goods)
+                        .leftJoin(cartItem.cart, cart)
+                        .leftJoin(cart.users, users)
+                        .where(cartItem.goods.id.eq(goodsId),
+                                cart.users.id.eq(userId))
+                        .fetchOne();
 
+        if(check==null){
+            return false;
+        }else if(check.getGoodsId()==goodsId){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * @param cartId 카트 번호
+     * @param userId 유저 번호
+     * @return 카트 아이템 조회
+     */
+    @Override
+    public List<GoodsCartItemDto> findGoodsCartItemById(Long cartId, Long userId) {
+        return jpaQueryFactory
+                .select(new QGoodsCartItemDto(
+                        cartItem.id,
+                        cartItem.cartItemQuantity,
+                        cart.id,
+                        cart.users.id,
+                        goods.id,
+                        goods.goodsName,
+                        goods.goodsQuantity,
+                        goods.goodsPrice,
+                        goodsMainImg.id,
+                        goodsMainImg.goodsMainImgName,
+                        goodsMainImg.goodsMainImgPath,
+                        goodsMainImg.goodsMainImgUuid
+                ))
+                .from(cartItem)
+                .leftJoin(cartItem.goods, goods)
+                .leftJoin(cartItem.goods.goodsMainImg, goodsMainImg)
+                .leftJoin(cartItem.cart, cart)
+                .leftJoin(cart.users, users)
+                .where(cart.id.eq(cartId).and(
+                        cart.users.id.eq(userId)
+                ))
+                .fetch();
+    }
 }

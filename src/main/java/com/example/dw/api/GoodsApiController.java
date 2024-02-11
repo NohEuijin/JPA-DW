@@ -2,7 +2,6 @@ package com.example.dw.api;
 
 import com.example.dw.domain.dto.goods.*;
 import com.example.dw.domain.form.*;
-import com.example.dw.repository.goods.ShopRepositoryCustom;
 import com.example.dw.service.GoodsService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,171 +25,7 @@ import java.util.Optional;
 @RequestMapping("/shops/*")
 public class GoodsApiController {
 
-    private final ShopRepositoryCustom shopRepositoryCustom;
     private final GoodsService goodsService;
-
-    /**
-     * 쇼핑 리스트 페이지
-     */
-    @GetMapping("/shop/{page}")
-    public Page<GoodsListDto> findShopList(
-            @PathVariable("page") int page, SearchForm searchForm){
-
-        System.out.println("나는 카테"+searchForm.getCate());
-        System.out.println("나는 키워"+searchForm.getKeyword());
-
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsListAll(pageable, searchForm);
-        System.out.println("쇼핑 글 개수 : " + result.stream().count());
-
-        return result;
-    }
-    // 간식 페이지 이동용
-    @GetMapping("/shop-a/{page}")
-    public Page<GoodsListDto> findShopAList(
-            @PathVariable("page") int page, SearchForm searchForm){
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsAList(pageable, searchForm);
-        return result;
-    }
-    // 영양제 페이지 이동용
-    @GetMapping("/shop-b/{page}")
-    public Page<GoodsListDto> findShopBList(
-            @PathVariable("page") int page, SearchForm searchForm){
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsBList(pageable, searchForm);
-        System.out.println("쇼핑 글 개수 : " + result.stream().count());
-        return result;
-    }
-    // 위생용품 페이지 이동용
-    @GetMapping("/shop-c/{page}")
-    public Page<GoodsListDto> findShopCList(
-            @PathVariable("page") int page, SearchForm searchForm){
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsCList(pageable, searchForm);
-        System.out.println("쇼핑 글 개수 : " + result.stream().count());
-        return result;
-    }
-    // 이동장 페이지 이동용
-    @GetMapping("/shop-d/{page}")
-    public Page<GoodsListDto> findShopDList(
-            @PathVariable("page") int page, SearchForm searchForm){
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsDList(pageable, searchForm);
-        System.out.println("쇼핑 글 개수 : " + result.stream().count());
-        return result;
-    }
-    // 장난감 페이지 이동용
-    @GetMapping("/shop-e/{page}")
-    public Page<GoodsListDto> findShopEList(
-            @PathVariable("page") int page, SearchForm searchForm){
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsEList(pageable, searchForm);
-        System.out.println("쇼핑 글 개수 : " + result.stream().count());
-        return result;
-    }
-    //산책용품 페이지 이동용
-    @GetMapping("/shop-f/{page}")
-    public Page<GoodsListDto> findShopFList(
-            @PathVariable("page") int page, SearchForm searchForm){
-        Pageable pageable = PageRequest.of(page,12);
-        Page<GoodsListDto> result = shopRepositoryCustom.findGoodsFList(pageable, searchForm);
-        System.out.println("쇼핑 글 개수 : " + result.stream().count());
-        return result;
-    }
-
-    /**
-     * 쇼핑 설명 페이지(이미지)
-     * @return
-     */
-    @GetMapping("/shopDetilImgs/{goodsId}")
-    public List<GoodsDetailImgDto> findDetailImgs(@PathVariable("goodsId") Long goodsId){
-
-        System.out.println(goodsId+"#############");
-        return goodsService.goodsDetailImgs(goodsId);
-    }
-
-    /**
-     * 쇼핑 추가정보 페이지
-     * @return
-     */
-    @GetMapping("/shopAddInfo/{goodsId}")
-    public Optional<GoodsAddInfoDto> findAddInfo(@PathVariable("goodsId") Long goodsId) {
-        Optional<GoodsAddInfoDto> detail = goodsService.goodsAddInfo(goodsId);
-
-        System.out.println(detail.toString());
-        return detail;
-    }
-
-    /**
-     * 쇼핑 리뷰 페이지
-     * @return
-     */
-    @GetMapping("/shopReview/{goodsId}")
-    public List<GoodsReviewListDto> findReviewList(@PathVariable("goodsId") Long goodsId){
-        List<GoodsReviewListDto> reviewList = goodsService.goodsReviewList(goodsId);
-
-
-        System.out.println(reviewList.toString());
-        return reviewList;
-    }
-
-    /**
-     * 쇼핑 Q and A 페이지
-     * @return
-     */
-    @GetMapping("/shopQnaList/{goodsId}")
-    public List<GoodsQueDto> findQnaList(@PathVariable("goodsId") Long goodsId){
-        List<GoodsQueDto> qnaList = goodsService.goodsQnaList(goodsId);
-
-
-        System.out.println(qnaList.toString());
-        return qnaList;
-    }
-
-    // 쇼핑 Q and A 페이지 모달 창으로 문의 글 작성하기
-    @PostMapping("/shopQandaWriteModal")
-    public ResponseEntity<Long> shopQandaWriteModal(GoodsQandaWritingForm goodsQandaWritingForm) {
-        try {
-            // goodsService를 사용하여 문의 글을 작성하고 저장하고 그에 대한 ID를 반환
-            Long savedGoodsQueId = goodsService.writeModal(goodsQandaWritingForm);
-
-            // 성공적으로 처리된 경우 해당 ID와 HTTP 상태코드 201(CREATED)를 응답
-            return new ResponseEntity<>(savedGoodsQueId, HttpStatus.CREATED);
-        } catch (Exception e) {
-            // 예외가 발생한 경우 내부 서버 오류(HTTP 상태코드 500)를 응답
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 쇼핑 카트 페이지
-     */
-    @GetMapping("/shopCart/{userId}")
-    public void findCartList(@PathVariable("userId") Long userId,
-                                           CartItemForm cartItemForm){
-
-        System.out.println("api goodsid" + cartItemForm.getGoodsId());
-        System.out.println("api cartid" + cartItemForm.getCartId());
-
-        goodsService.cartItemRegister(userId, cartItemForm);
-    }
-    //카트에 물건 담기
-    @GetMapping("/shopCartList/{userId}")
-    public GoodsCartListDto findCartList(@PathVariable("userId") Long userId){
-
-       return goodsService.findCartItems(userId);
-    }
-    //카트 물건 삭제
-    @GetMapping("/delete/{cartItemId}")
-    public void deleteCartItem(@PathVariable("cartItemId")Long cartItemId){
-        goodsService.deleteCartItem(cartItemId);
-    }
-    // 카트 물건 전체 삭제
-    @GetMapping("/deleteAll")
-    public void deleteCart() {
-        goodsService.deleteAllCartItems();
-    }
 
     /**
      * 쇼핑 이미지 처리
@@ -205,7 +38,112 @@ public class GoodsApiController {
         return FileCopyUtils.copyToByteArray(new File(fileShopImg, fileFullPath));
     }
 
-    //장바구니 정보 넣기
+    /**
+     * @param category 쇼핑 카테고리
+     * @param page 페이징
+     * @param searchForm 검색
+     * @return 카테고리별 쇼핑 목록
+     */
+    @GetMapping("/shop/{category}/{page}")
+    public Page<GoodsListDto> findShopListByCategory(
+            @PathVariable("category") String category,
+            @PathVariable("page") int page, SearchForm searchForm){
+        Pageable pageable = PageRequest.of(page, 12);
+        return goodsService.getGoodsListByCategory(category, pageable, searchForm);
+    }
+
+    /**
+     * 쇼핑 상세 - 설명(이미지)
+     * @return 이미지
+     */
+    @GetMapping("/shopDetilImgs/{goodsId}")
+    public List<GoodsDetailImgDto> findDetailImgs(@PathVariable("goodsId") Long goodsId){
+        return goodsService.goodsDetailImgs(goodsId);
+    }
+
+    /**
+     * 쇼핑 상세 - 추가정보
+     * @return 추가정보
+     */
+    @GetMapping("/shopAddInfo/{goodsId}")
+    public Optional<GoodsAddInfoDto> findAddInfo(@PathVariable("goodsId") Long goodsId) {
+        return goodsService.goodsAddInfo(goodsId);
+    }
+
+    /**
+     * 쇼핑 상세 - 리뷰
+     * @return 리뷰 목록
+     */
+    @GetMapping("/shopReview/{goodsId}")
+    public List<GoodsReviewListDto> findReviewList(@PathVariable("goodsId") Long goodsId){
+        System.out.println(goodsService.goodsReviewList(goodsId).toString());
+        return goodsService.goodsReviewList(goodsId);
+    }
+
+    /**
+     * 쇼핑 상세 - 문의
+     * @return 문의 목록
+     */
+    @GetMapping("/shopQnaList/{goodsId}")
+    public List<GoodsQueDto> findQnaList(@PathVariable("goodsId") Long goodsId){
+        System.out.println(goodsService.goodsQnaList(goodsId).toString());
+        return goodsService.goodsQnaList(goodsId);
+    }
+
+    /**
+     *  쇼핑 - 모달 창 - 문의 글 작성
+     * @param goodsQandaWritingForm 문의 글 작성 폼
+     * @return 모달에서 작성된 문의 글
+     */
+    @PostMapping("/shopQandaWriteModal")
+    public Long shopQandaWriteModal(GoodsQandaWritingForm goodsQandaWritingForm) {
+        return goodsService.writeModal(goodsQandaWritingForm);
+    }
+
+    /**
+     * 유저의 쇼핑 아이템 번호를 부여하는 메소드
+     * @param userId 유저 번호
+     * @param cartItemForm 쇼핑 아이템 카트
+     */
+    @GetMapping("/shopCart/{userId}")
+    public void findCartList(@PathVariable("userId") Long userId,
+                                           CartItemForm cartItemForm){
+        System.out.println("api goodsid" + cartItemForm.getGoodsId());
+        System.out.println("api cartid" + cartItemForm.getCartId());
+
+        goodsService.cartItemRegister(userId, cartItemForm);
+    }
+    /**
+     * 쇼핑  - 카트 물품 저장
+     * @param userId 유저 번호
+     * @return 유저의 카트 상품들
+     */
+    @GetMapping("/shopCartList/{userId}")
+    public GoodsCartListDto findCartList(@PathVariable("userId") Long userId){
+       return goodsService.findCartItems(userId);
+    }
+    /**
+     * 카트 물건 - 삭제
+     * @param cartItemId 카트 아이템 번호
+     */
+    @GetMapping("/delete/{cartItemId}")
+    public void deleteCartItem(@PathVariable("cartItemId")Long cartItemId){
+        goodsService.deleteCartItem(cartItemId);
+    }
+
+    /**
+     * 카트 물건 - 전체 삭제
+     */
+    @GetMapping("/deleteAll")
+    public void deleteCart() {
+        goodsService.deleteAllCartItems();
+    }
+
+    /**
+     * 장바구니에 아이템(상품) 저장하기
+     * @param goodsPayListFrom 장바구니 리스트를 저장할 폼
+     * @param session 장바구니 아이템(상품) 저장을 위한 세션
+     */
     @PostMapping("/cartGoods")
     public void cartGoods(@RequestBody List<GoodsPayListFrom> goodsPayListFrom, HttpSession session){
 
@@ -234,7 +172,11 @@ public class GoodsApiController {
         session.setAttribute("goodsPayList", goodsPayList);
     }
 
-    //바로가기 정보 넣기
+    /**
+     * 쇼핑 - 바로구매 아이템(상품) 저장하기
+     * @param goodsPaySingleFrom 단건 아이템(상품)을 저장하기 위한 폼
+     * @param session 장바구니 아이템(상품) 저장을 위한 세션
+     */
     @PostMapping("/payGoods")
     public void payGoods(@RequestBody List<GoodsPaySingleFrom> goodsPaySingleFrom, HttpSession session){
 
@@ -250,17 +192,22 @@ public class GoodsApiController {
         session.setAttribute("goodsPaySingle", goodsPaySingle);
     }
 
-    //가져오기
+    /**
+     * 장바구니 -> 주문서(장바구니 세션(상품) 정보 가져가기)
+     * @param session 장바구니 아이템(상품) 저장을 위한 세션
+     * @return 장바구니에 저장된 세션(상품)
+     */
     @GetMapping("/goodsPickList")
     public List<GoodsPayListFrom> payGoodsList(HttpSession session){
-        List<GoodsPayListFrom> goodsPayListDtoList = (List<GoodsPayListFrom>) session.getAttribute("goodsPayList");
-
-        System.out.println("총 주문내역 가져오기 : "+goodsPayListDtoList);
-
-        return goodsPayListDtoList;
+        return (List<GoodsPayListFrom>) session.getAttribute("goodsPayList");
     }
 
-    //싱글 결제 정보 가져오기
+    /**
+     * 바로 구매 하기
+     * 장바구니 -> 주문서(장바구니 세션(상품) 단건 가져가기)
+     * @param httpSession 장바구니 아이템(상품) 단건을 저장하기 위한 세션
+     * @return 장바구니에 단건으로 저장된 세션(상품)
+     */
     @GetMapping("/goodsSinglePickList")
     public List<GoodsPaySingleFrom> payGoodsSingle(HttpSession httpSession) {
         List<GoodsPaySingleFrom> goodsPaySingleFrom = (List<GoodsPaySingleFrom>) httpSession.getAttribute("goodsPaySingle");

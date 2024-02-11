@@ -1,4 +1,3 @@
-// 검색어 입력 이벤트 감지
 import * as list from './module/list.js'
 import * as page from './module/page.js';
 
@@ -23,7 +22,6 @@ function searchNoticeForm(){
     };
 }
 
-
 /**
  * 자유게시판 비동기 리스트
  * 시간, 페이징
@@ -33,15 +31,21 @@ function showNoticeList(result) {
     let textInput = $('.notice-list');
 
     result.content.forEach(r => {
-        let formattedDate = formatDates(r.noticeBoardRd);
+        let formattedDate;
+        if(r.noticeBoardMd == null){
+            formattedDate = formatDates(r.noticeBoardRd)
+        }else{
+            formattedDate = formatDates(r.noticeBoardMd)
+        }
+
         text += `
-                    <tr class="body-columns">
-                        <td>${r.id}</td>
-                        <td><a href="/notice/noticeDetail/${r.id}">${r.noticeBoardTitle}</a></td>
-                        <td>관리자</td>
-                        <td>${formattedDate}</td>
-                        <td class="noticeBoardViewCount">${r.noticeBoardViewCount}</td>
-                    </tr>
+        <tr class="body-columns">
+            <td>${r.id}</td>
+            <td><a href="/notice/noticeDetail/${r.id}">${r.noticeBoardTitle}</a></td>
+            <td>관리자</td>
+            <td>${formattedDate}</td>
+            <td class="noticeBoardViewCount">${r.noticeBoardViewCount}</td>
+        </tr>
             `;
     })
 

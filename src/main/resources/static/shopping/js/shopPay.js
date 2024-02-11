@@ -30,24 +30,21 @@ function getPickList(result){
 
     result.forEach(r=>{
         text += `
-
         <div className="product-total">
             <span> ${r.goodsName} </span>
             <span class="goodsPrice">${addCommas(r.goodsPrice)}</span> x
             <span class="goodsQuantity">${r.goodsQuantity}</span> =
             <span id="price" class="goodsTotal" data-price="${r.goodsPrice}">${addCommas(r.goodsPrice * r.goodsQuantity)}</span>
         </div>
-
         `
     })
     inputSection.html(text);
 }
 
-// 콤마 찍기 함수
+// 콤마 찍기
 function addCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
 
 // 총 결제 금액 업데이트 함수
 function updateTotalPrice() {
@@ -57,7 +54,6 @@ function updateTotalPrice() {
         dynamicPricesArray.push(parseInt($(this).text().replace(/[^\d]+/g, ''), 10));
         // 숫자만 추출하여 배열에 추가
     });
-
     let totalPrice = dynamicPricesArray.reduce((sum, price) => sum + price, 0);
     $('#total').text(addCommas(totalPrice) + ' 원');
 }
@@ -139,11 +135,6 @@ $(".cart-button").click(function () {
     });
 });
 
-
-
-
-
-
 //다음 주소API
 function addressFind() {
     new daum.Postcode({
@@ -193,127 +184,3 @@ function addressFind() {
     }).open();
     console.log("성공!");
 }
-
-
-//약관 체크
-let $all = $("#total-check");
-let $inputs = $(".term");
-let terms = $('.terms')
-
-$all.on('click', function(){
-    if($(this).is(":checked")){
-        $inputs.prop('checked', true);
-        $('.join-term').slideUp(500)
-    }else{
-        $inputs.prop('checked', false);
-        $('.join-term').slideDown(500)
-    }
-});
-
-$inputs.on('click', function(){
-    if(!$(this).is(":checked")){
-        $all.prop('checked', false);
-        $('.join-term').slideDown(500)
-
-    }
-    if($inputs.filter(":checked").length === $inputs.length){
-        $all.prop('checked', true);
-        $('.join-term').slideUp(500)
-
-    }
-});
-
-//회원가입 유효성 검사
-function join(){
-   
-    $('.cart-button').on('click', function(){
-
-        let userName = $("#userName").val();
-        let userEmail = $("#userEmail").val();
-        let userPhone = $("#userPhone").val();
-        let userPostCode = $('#addressPost').val();
-        let userAddress = $("#orderAddressNormal").val();
-        let userAddressDetails = $("#addressDetails").val();
-
-            if($('.userPhoneCh').css('display')=='block'){
-                alert("휴대폰 번호 양식을 확인해주세요");
-                return false;
-            }
-
-            if($('.userEmailCh').css('display')=='block'){
-                alert("이메일 양식을 확인해주세요");
-                return false;
-            }
-
-            if (!(userEmail && userName && userPhone && userPostCode && userAddress && userAddressDetails)) {
-
-                alert("모든 정보를 입력해주세요")
-                return false;
-            }
-            $('#join_form').submit();
-	        alert("결제가 진행 됩니다!")
-	        return true;
-    })
-
-
-}
-$('document').ready(function(){
-	join();
-})
-
-
-//휴대폰번호 양식 체크
-$('#userPhone').keyup(function(){
-	let userPhone = $(this).val();
-    const pattern = /^(010)[0-9]{3,4}[0-9]{4}$/;
-
-    let phoneCheck = pattern.test(userPhone);
-	
-	if(!phoneCheck) {
-		$('.userPhoneCh').css('display', 'block');
-		
-		return;
-	}else {
-		$('.userPhoneCh').css('display', 'none');
-
-	}
-	
-})
-
-
-//이메일 양식 체크
-$('#userEmail').keyup(function() {
-	let userEmail = $(this).val();
-	// console.log(userEmail);
-	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]+/;
-	
-	let emailCheck = pattern.test(userEmail);
-	
-	if (emailCheck) {
-		$('.userEmailCh').css('display', 'none')
-	} else {
-		$('.userEmailCh').css('display', 'block')
-		return;
-	}
-})
-
-
-//특수문자(이메일용)
-function characterCheck(obj){
-    var regExp = /[ \{\}\[\]\/?,;:|\)*~`!^\-_+┼<>\#$%&\'\"\\\(\=]/gi;
-    if( regExp.test(obj.value) ){
-        alert("@제외한 특수문자는 입력하실 수 없습니다.");
-        obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
-    }
-}
-
-//모든특수문자용
-function AllCharacterCheck(obj){
-    var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>\#$%&\'\"\\@\(\=]/gi;
-    if( regExp.test(obj.value) ){
-        alert("특수문자는 입력하실수 없습니다.");
-        obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
-    }
-}
-
-

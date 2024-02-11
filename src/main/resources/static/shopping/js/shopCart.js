@@ -1,7 +1,7 @@
 let userId = $('#userId').val();
 console.log(userId)
 
-// 화면 진입 시 초기 데이터 로드
+// 화면 진입 시
 $(document).ready(function () {
     getCart(userId, function (result) {
         getCartList(result);
@@ -9,7 +9,6 @@ $(document).ready(function () {
     });
 });
 
-//비동기
 function getCart(userId, callback){
 
     $.ajax({
@@ -34,6 +33,9 @@ function getCartList(result){
 
     result.cartItemDetails.forEach(r=>{
 
+        if (r.goodsId == null) {
+            $('.remove-all-btn').hide();
+        }
 
         text += `
         <div class="cart_table">
@@ -71,7 +73,7 @@ function getCartList(result){
     inputSection.html(text);
 
 }
-    // Increase 및 Decrease 버튼 클릭 시 공통 로직 함수
+    // Increase 및 Decrease 버튼 클릭 시
     function handleQuantityChange(button, increase) {
         const quantityElement = button.closest('.quantity-box').find('.quantity');
         let quantity = parseInt(quantityElement.text(), 10);
@@ -142,7 +144,6 @@ function updateTotalPrice() {
     /**
      * 결제 버튼 클릭 시 데이터를 수집
      */
-
     $('.cart-button').on('click', function () {
         let order = [];
         let currentPrices = collectDataName('.item-price', 'price');
@@ -162,7 +163,6 @@ function updateTotalPrice() {
         }
         console.log(order);
 
-
         $.ajax({
             url : '/shops/cartGoods',
             type : 'post',
@@ -172,6 +172,10 @@ function updateTotalPrice() {
 
                 console.log(result)
 
+                if (goodsId.length === 0) {
+                    confirm("결제할 상품이 없습니다!")
+                    return;
+                }
                 if(confirm("결제페이지로 이동하시겠습니까?")){
                     window.location.href="/shop/shopPay/" + userId;
                 }
@@ -179,13 +183,10 @@ function updateTotalPrice() {
             },error : function (a,b,c){
                 console.error(c)
             }
-
         })
-
     });
 
-
-// 콤마 찍기 함수
+// 콤마 찍기
 function addCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -206,18 +207,14 @@ function removeCartItem(cartItemId, callback){
     })
 }
 
-
-
-//카트 아이템 삭제 버튼 이벤트
+//카트 아이템 삭제 버튼
 $('.cart_list').on('click', '.remove-btn',function(){
     let cartItemId = $(this).data('cartitemid');
     console.log(cartItemId)
     if(confirm("상품을 삭제 하시겠습니까?")){
         removeCartItem(cartItemId, function (){
             getCart(userId, getCartList)
-
         })
-
     }
 })
 
@@ -235,8 +232,14 @@ function removeCart(callback){
     })
 }
 
-//카트 삭제 버튼 이벤트
+//카트 삭제 버튼
 $('.remove-all-btn').on('click', function(){
+    let goodsId = collectInputData('.thumbnail-dox-div .goodsId');
+
+    //상품이 없으면
+    if (goodsId.length === 0) {
+        return;
+    }
     if(confirm("상품을 모두 삭제 하시겠습니까?")){
         removeCart(function (){
             getCart(userId, getCartList)
